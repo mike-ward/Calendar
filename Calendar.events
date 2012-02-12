@@ -1,0 +1,30 @@
+V2
+0,1,1,2005,1,0,0,0,0,False,New Year's Day
+1,1,1,2005,3,0,1,0,0,False,Martin Luther King Day
+0,2,2,2005,1,0,0,0,0,False,Groundhog Day
+2,1,1,2005,1,-47,0,1,0,False,Mardi Gras
+0,2,14,2005,1,0,0,0,0,False,Valentine's Day
+1,2,1,2005,3,0,1,0,0,False,President's Day
+0,3,17,2005,1,0,0,0,0,False,St. Patrick's Day
+2,1,1,2005,1,0,0,3,0,False,Spring begins at {0:t}
+2,1,1,2005,1,0,0,1,0,False,Easter
+1,4,1,2005,1,0,0,0,0,False,Daylight Savings Time Begins
+1,4,25,2005,7,0,3,0,0,False,Secretary's Day
+1,5,8,2005,6,0,2,3,0,False,Teacher's Day
+1,5,1,2005,2,0,0,0,0,False,Mother's Day
+1,5,1,2005,5,0,1,0,0,False,Memorial Day
+0,6,14,2005,1,0,0,0,0,False,Flag Day
+1,6,1,2005,3,0,0,0,0,False,Father's Day
+2,1,1,2005,1,0,0,4,0,False,Summer begins at {0:t}
+0,7,4,2005,1,0,0,0,0,False,Independence Day
+1,9,1,2005,1,0,1,0,0,False,Labor Day
+2,1,1,2005,1,0,0,5,0,False,Autumn begins at {0:t}
+1,10,1,2005,2,0,1,0,0,False,Columbus Day
+1,10,1,2005,5,0,0,0,0,False,Daylight Savings Time Ends
+0,10,31,2005,1,0,0,0,0,False,Halloween
+0,11,11,2005,1,0,0,0,0,False,Veterans' Day
+1,11,4,2005,4,0,4,0,0,False,Thanksgiving
+2,1,1,2005,1,0,0,6,0,False,Winter begins at {0:t}
+0,12,24,2005,1,0,0,0,0,False,Christmas Eve
+0,12,25,2005,1,0,0,0,0,False,Christmas Day
+0,12,31,2005,1,0,0,0,0,False,New Year's Eve

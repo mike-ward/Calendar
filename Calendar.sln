@@ -1,0 +1,45 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{93B563E9-5130-4A2E-BDC8-B0BBEA85E251}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendar", "Calendar.csproj", "{D9346C8E-BE9C-4816-A2DB-21E965C18214}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{5906ECE3-86B6-440F-BB0F-5AAD053E97FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Donate", "Donate\Donate.csproj", "{AE9FB9B6-FE1F-4FFB-A596-BD0B71BE9622}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup64", "Setup64\Setup64.vdproj", "{E95D70C9-FAE5-49D6-B177-EF33C5ECB113}"
+EndProject
+Global
+	GlobalSection(MercurialSourceControlSolutionProperties) = preSolution
+		SolutionIsControlled = True
+		SolutionBindings = <Solution Location In Database>
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D9346C8E-BE9C-4816-A2DB-21E965C18214}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9346C8E-BE9C-4816-A2DB-21E965C18214}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9346C8E-BE9C-4816-A2DB-21E965C18214}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9346C8E-BE9C-4816-A2DB-21E965C18214}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5906ECE3-86B6-440F-BB0F-5AAD053E97FF}.Debug|Any CPU.ActiveCfg = Debug
+		{5906ECE3-86B6-440F-BB0F-5AAD053E97FF}.Release|Any CPU.ActiveCfg = Release
+		{5906ECE3-86B6-440F-BB0F-5AAD053E97FF}.Release|Any CPU.Build.0 = Release
+		{AE9FB9B6-FE1F-4FFB-A596-BD0B71BE9622}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE9FB9B6-FE1F-4FFB-A596-BD0B71BE9622}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE9FB9B6-FE1F-4FFB-A596-BD0B71BE9622}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE9FB9B6-FE1F-4FFB-A596-BD0B71BE9622}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E95D70C9-FAE5-49D6-B177-EF33C5ECB113}.Debug|Any CPU.ActiveCfg = Debug
+		{E95D70C9-FAE5-49D6-B177-EF33C5ECB113}.Release|Any CPU.ActiveCfg = Release
+		{E95D70C9-FAE5-49D6-B177-EF33C5ECB113}.Release|Any CPU.Build.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+EndGlobal
