@@ -3,4 +3,4 @@ Calendar
 
 A simple, perpetual calendar for windows.
 
-[Download](http://mike-ward.net/downloads)
+[(more...)](http://mike-ward.net/calendar)
