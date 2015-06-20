@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*"
+           Name="Calendar"
+           Language="1033"
+           Version="2.2.3"
+           Manufacturer="Mike Ward"
+           UpgradeCode="{B21956FF-7B04-4FA2-BB5B-C9524EAAD656}">
+
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perUser" InstallPrivileges="limited" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."
+                  AllowDowngrades="no"
+                  AllowSameVersionUpgrades="yes" />
+    <Media Id="1" Cabinet="cab1.cab" EmbedCab="yes" />
+    <SetProperty Id="ProgramFilesFolder" Value="[LocalAppDataFolder]" Before="CostFinalize"><![CDATA[NOT Privileged]]></SetProperty>
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="Calendar">
+          <Component Id="ApplicationShortcut" Guid="{30EEDDBA-9F2C-44BA-8DE8-A01E61C68B30}">
+            <Shortcut Id="ApplicationStartMenuShortcut"
+                      Name="Calendar"
+                      Description="Desktop Calendar for Windows"
+                      Target="[INSTALLFOLDER]calendar.exe"
+                      WorkingDirectory="INSTALLFOLDER" />
+            <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
+            <RegistryValue Root="HKCU" Key="Software\Microsoft\Calendar" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+          </Component>
+        </Directory>
+      </Directory>
+
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="Calendar" Name="Calendar">
+          <Directory Id="INSTALLFOLDER" Name="bin">
+            <Component Id="Calendar.exe" Guid="">
+              <File Id="Calendar.exe" KeyPath="yes" Source="$(var.SourceFiles)\Calendar.exe" />
+            </Component>
+            <Component Id="Calendar.exe" Guid="">
+              <File Id="Calendar.exe" KeyPath="yes" Source="$(var.SourceFiles)\Calendar.exe" />
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <UIRef Id="WixUI_Minimal" />
+
+    <Property Id="SKIPFRAMEWORKCHECK" Value="0" />
+    <PropertyRef Id="NETFRAMEWORK45" />
+    <Condition Message="Markdown Edit requires .NET Framework 4.5.2. Visit http://smallestdotnet.com">
+      <![CDATA[Installed OR (SKIPFRAMEWORKCHECK <> 0) OR (NETFRAMEWORK45 >= "#379893")]]>
+    </Condition>
+
+    <Feature Id="ProductFeature" Title="Calendar" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+    </Feature>
+
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <ComponentRef Id="Calender.exe" />
+      <ComponentRef Id="CommonMark.dll" />
+    </ComponentGroup>
+  </Product>
+</Wix>
