@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Build.cmd" />
     <None Include="Product.wxs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

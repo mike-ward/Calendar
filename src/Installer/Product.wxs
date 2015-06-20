@@ -33,11 +33,11 @@
       <Directory Id="ProgramFilesFolder">
         <Directory Id="Calendar" Name="Calendar">
           <Directory Id="INSTALLFOLDER" Name="bin">
-            <Component Id="Calendar.exe" Guid="">
+            <Component Id="Calendar.exe" Guid="{6347DBB7-6694-4069-8023-318B7322ACB9}">
               <File Id="Calendar.exe" KeyPath="yes" Source="$(var.SourceFiles)\Calendar.exe" />
             </Component>
-            <Component Id="Calendar.exe" Guid="">
-              <File Id="Calendar.exe" KeyPath="yes" Source="$(var.SourceFiles)\Calendar.exe" />
+            <Component Id="Calendar.exe.config" Guid="{E0433E30-E063-49CC-A089-5F9ED0711F35}">
+              <File Id="Calendar.exe.config" KeyPath="yes" Source="$(var.SourceFiles)\Calendar.exe.config" />
             </Component>
           </Directory>
         </Directory>
@@ -58,8 +58,9 @@
     </Feature>
 
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <ComponentRef Id="Calender.exe" />
-      <ComponentRef Id="CommonMark.dll" />
+      <ComponentRef Id="ApplicationShortcut" />
+      <ComponentRef Id="Calendar.exe" />
+      <ComponentRef Id="Calendar.exe.config" />
     </ComponentGroup>
   </Product>
 </Wix>
