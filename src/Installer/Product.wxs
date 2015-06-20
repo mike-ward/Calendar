@@ -49,7 +49,7 @@
 
     <Property Id="SKIPFRAMEWORKCHECK" Value="0" />
     <PropertyRef Id="NETFRAMEWORK45" />
-    <Condition Message="Markdown Edit requires .NET Framework 4.5.2. Visit http://smallestdotnet.com">
+    <Condition Message="Calendar requires .NET Framework 4.5.2. Visit http://smallestdotnet.com">
       <![CDATA[Installed OR (SKIPFRAMEWORKCHECK <> 0) OR (NETFRAMEWORK45 >= "#379893")]]>
     </Condition>
 
