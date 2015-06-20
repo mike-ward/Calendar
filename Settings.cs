@@ -1,5 +1,3 @@
-// Copyright 2005 Blue Onion Software, All rights reserved
-//
 using System;
 using System.IO;
 using System.Drawing;
