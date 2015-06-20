@@ -9,8 +9,6 @@ using System.Windows.Forms;
 
 namespace BlueOnion
 {
-    [XmlDSigLic]
-    [LicenseProvider(typeof (XmlDSigLicProvider))]
     internal class Calendar : Form
     {
         private readonly EventsCollection events = new EventsCollection();

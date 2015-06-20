@@ -152,15 +152,6 @@
     <Compile Include="WelcomeForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="XmlDSigLic.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="XmlDSigLicAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="XmlDSigLicProvider.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -190,7 +181,6 @@
     <Content Include="Changes.txt" />
     <Content Include="Tray.ico" />
     <None Include="app.config" />
-    <None Include="Calendar.abw" />
     <None Include="Calendar.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
