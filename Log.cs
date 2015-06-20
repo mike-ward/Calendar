@@ -1,12 +1,10 @@
-﻿// Copyright (c) 2008 Blue Onion Software, All rights reserved
+﻿using System.ComponentModel;
+using System.Configuration.Install;
+using System.Diagnostics;
 
 namespace BlueOnion
 {
-    using System.ComponentModel;
-    using System.Configuration.Install;
-    using System.Diagnostics;
-
-    static class Log
+    internal static class Log
     {
         public static void Error(string message)
         {
@@ -23,7 +21,7 @@ namespace BlueOnion
             WriteEntry(message, EventLogEntryType.Information);
         }
 
-        static void WriteEntry(string message, EventLogEntryType eventType)
+        private static void WriteEntry(string message, EventLogEntryType eventType)
         {
             if (EventLog.SourceExists(InstallEventLog.EventSource))
             {

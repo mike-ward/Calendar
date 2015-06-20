@@ -1,17 +1,15 @@
-// Copyright 2005 Blue Onion Software, All rights reserved.
-//
 using System;
-using System.Xml;
-using System.Text;
-using System.Reflection;
-using System.Globalization;
 using System.ComponentModel;
+using System.Globalization;
+using System.Reflection;
+using System.Text;
+using System.Xml;
 
 namespace BlueOnion
 {
-	public sealed class XmlDSigLic : License
-	{
-        private string licenseKey;
+    public sealed class XmlDSigLic : License
+    {
+        private readonly string licenseKey;
         private string productID;
         private string name;
         private string email;
@@ -19,18 +17,15 @@ namespace BlueOnion
         private bool keyParseAttempted;
 
         // ---------------------------------------------------------------------
-		public XmlDSigLic(string licenseKey)
-		{
+        public XmlDSigLic(string licenseKey)
+        {
             this.licenseKey = licenseKey;
-		}
+        }
 
         // ---------------------------------------------------------------------
         public override string LicenseKey
         {
-            get
-            {
-                return this.licenseKey;
-            }
+            get { return licenseKey; }
         }
 
         // ---------------------------------------------------------------------
@@ -38,20 +33,20 @@ namespace BlueOnion
         {
             ParseKey();
 
-            Assembly assembly = Assembly.GetExecutingAssembly();
+            var assembly = Assembly.GetExecutingAssembly();
 
-            ProductIdAttribute productId = assembly.GetCustomAttributes
-                (typeof(ProductIdAttribute), false)[0] as ProductIdAttribute;
+            var productId = assembly.GetCustomAttributes
+                (typeof (ProductIdAttribute), false)[0] as ProductIdAttribute;
 
-            if (this.productID != productId.ProductId)
+            if (productID != productId.ProductId)
             {
                 return false;
             }
-            
+
             // Once an expiration is detected, never allow it to be true
-            if (DateTime.Today >= this.expirationDate)
+            if (DateTime.Today >= expirationDate)
             {
-                this.expirationDate = DateTime.MinValue;
+                expirationDate = DateTime.MinValue;
                 return false;
             }
 
@@ -61,97 +56,90 @@ namespace BlueOnion
         // ---------------------------------------------------------------------
         public string Name
         {
-            get 
-            { 
+            get
+            {
                 ParseKey();
-                return this.name; 
+                return name;
             }
         }
 
         // ---------------------------------------------------------------------
         public string Email
         {
-            get 
-            { 
+            get
+            {
                 ParseKey();
-                return this.email; 
+                return email;
             }
         }
 
         // ---------------------------------------------------------------------
         public DateTime Expires
         {
-            get 
-            { 
+            get
+            {
                 ParseKey();
-                return this.expirationDate; 
+                return expirationDate;
             }
         }
 
         // ---------------------------------------------------------------------
         private void ParseKey()
         {
-            if (this.keyParseAttempted == true)
+            if (keyParseAttempted)
             {
                 return;
             }
 
-            this.keyParseAttempted = true;
+            keyParseAttempted = true;
 
-            if (this.licenseKey.Length == 0)
+            if (licenseKey.Length == 0)
             {
                 return;
             }
 
-            XmlDocument doc = new XmlDocument();
+            var doc = new XmlDocument();
 
             try
             {
                 doc.LoadXml(LicenseKey);
-                XmlElement licenseElement = doc["license"];
+                var licenseElement = doc["license"];
 
-                this.productID = licenseElement["product_id"].InnerText;
+                productID = licenseElement["product_id"].InnerText;
 
-                this.name = licenseElement["first_name"].InnerText + " " +
+                name = licenseElement["first_name"].InnerText + " " +
                     licenseElement["last_name"].InnerText;
 
-                this.email = licenseElement["email"].InnerText;
+                email = licenseElement["email"].InnerText;
 
-                byte[] expireb = Convert.FromBase64String
+                var expireb = Convert.FromBase64String
                     (licenseElement["d1"].InnerText);
 
-                string expires = Encoding.UTF8.GetString(expireb);
+                var expires = Encoding.UTF8.GetString(expireb);
 
-                this.expirationDate = DateTime.ParseExact
-                    (expires, "s", CultureInfo.InvariantCulture, 
-                    DateTimeStyles.NoCurrentDateDefault |
-                    DateTimeStyles.AllowLeadingWhite |
-                    DateTimeStyles.AllowTrailingWhite);
+                expirationDate = DateTime.ParseExact
+                    (expires, "s", CultureInfo.InvariantCulture,
+                        DateTimeStyles.NoCurrentDateDefault |
+                            DateTimeStyles.AllowLeadingWhite |
+                            DateTimeStyles.AllowTrailingWhite);
             }
-
             catch (XmlException e)
             {
                 Log.Error(e.Message);
-                return;
             }
-
             catch (NullReferenceException e)
             {
                 Log.Error(e.Message);
-                return;
             }
-
             catch (FormatException e)
             {
                 Log.Error(e.Message);
-                return;
             }
         }
 
         // ---------------------------------------------------------------------
         public override void Dispose()
         {
-            return;
         }
-	}
+    }
 }

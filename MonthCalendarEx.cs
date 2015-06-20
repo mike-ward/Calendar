@@ -1,5 +1,3 @@
-// Copyright 2005 Blue Onion Software, All rights reserved
-//
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -10,19 +8,17 @@ using System.Windows.Forms;
 
 namespace BlueOnion
 {
-    public class MonthCalendarEx : System.Windows.Forms.Control
+    public class MonthCalendarEx : Control
     {
         private Size months = new Size(1, 1);
         private DateTime today = DateTime.Today;
         private DateTime currentDate = DateTime.Today;
         private DateTime firstMonth = DateTime.Today;
         private DayOfWeek firstDayOfWeek = DayOfWeek.Sunday;
-        private DateTime[] boldedDates;
-        private DateTime[] coloredDates;
         private Hashtable boldedDays;
         private Hashtable coloredDays;
         private bool showToday = true;
-        private bool showWeekNumbers = false;
+        private bool showWeekNumbers;
         private bool showTodayCircle = true;
 
         private Color titleForeColor = SystemColors.ActiveCaptionText;
@@ -37,10 +33,9 @@ namespace BlueOnion
         private Color gridlinesColor = SystemColors.GrayText;
 
         private SizeF cellSize;
-        private SizeF cellPadding = new Size(0, 0);
+        private readonly SizeF cellPadding = new Size(0, 0);
         private SizeF monthPadding = new Size(1, 1);
         private SizeF border = new SizeF(0, 0);
-        private Size singleMonthSize;
 
         private RectangleF titleRectangle;
         private RectangleF weekdaysRectangle;
@@ -62,9 +57,9 @@ namespace BlueOnion
         private RectangleF[] YearAreas;
         private ArrowButton previousButton;
         private ArrowButton nextButton;
-        private System.Windows.Forms.ContextMenu monthMenu;
-        private System.Windows.Forms.ContextMenu yearMenu;
-        private System.ComponentModel.Container components = null;
+        private ContextMenu monthMenu;
+        private ContextMenu yearMenu;
+        private readonly Container components = null;
 
         public event DateRangeEventHandler DateChanged;
 
@@ -84,18 +79,18 @@ namespace BlueOnion
             InitializeComponent();
             OnFontChanged(EventArgs.Empty);
 
-            this.Controls.Add(this.previousButton);
-            this.Controls.Add(this.nextButton);
+            Controls.Add(previousButton);
+            Controls.Add(nextButton);
 
             SetStyle(ControlStyles.ResizeRedraw, true);
 
-            foreach (string month in
+            foreach (var month in
                 CultureInfo.CurrentCulture.DateTimeFormat.MonthNames)
             {
                 if (month.Length > 0)
                 {
-                    this.monthMenu.MenuItems.Add(month,
-                        new EventHandler(OnSelectMonth));
+                    monthMenu.MenuItems.Add(month,
+                        OnSelectMonth);
                 }
             }
 
@@ -105,23 +100,23 @@ namespace BlueOnion
         // ---------------------------------------------------------------------
         protected override void Dispose(bool disposing)
         {
-            if (disposing == true)
+            if (disposing)
             {
                 if (components != null)
                 {
                     components.Dispose();
                 }
 
-                if (this.monthMenu != null)
+                if (monthMenu != null)
                 {
-                    this.monthMenu.Dispose();
-                    this.monthMenu = null;
+                    monthMenu.Dispose();
+                    monthMenu = null;
                 }
 
-                if (this.monthMenu != null)
+                if (monthMenu != null)
                 {
-                    this.yearMenu.Dispose();
-                    this.yearMenu = null;
+                    yearMenu.Dispose();
+                    yearMenu = null;
                 }
             }
 
@@ -129,9 +124,10 @@ namespace BlueOnion
         }
 
         #region Component Designer generated code
+
         // ---------------------------------------------------------------------
         /// <summary>
-        /// Required method for Designer support - do not modify 
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -140,13 +136,13 @@ namespace BlueOnion
             this.nextButton = new BlueOnion.ArrowButton();
             this.monthMenu = new System.Windows.Forms.ContextMenu();
             this.yearMenu = new System.Windows.Forms.ContextMenu();
-            // 
+            //
             // previousButton
-            // 
+            //
             this.previousButton.BackColor = System.Drawing.SystemColors.Control;
             this.previousButton.Direction = BlueOnion.ArrowButton.ArrowButtonDirection.Left;
             this.previousButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.previousButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+            this.previousButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte) (0)));
             this.previousButton.ForeColor = System.Drawing.Color.White;
             this.previousButton.Location = new System.Drawing.Point(17, 17);
             this.previousButton.Name = "previousButton";
@@ -154,12 +150,12 @@ namespace BlueOnion
             this.previousButton.TabIndex = 0;
             this.previousButton.TabStop = false;
             this.previousButton.Click += new System.EventHandler(this.PreviousButton_Click);
-            // 
+            //
             // nextButton
-            // 
+            //
             this.nextButton.Direction = BlueOnion.ArrowButton.ArrowButtonDirection.Right;
             this.nextButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.nextButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+            this.nextButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte) (0)));
             this.nextButton.ForeColor = System.Drawing.Color.White;
             this.nextButton.Location = new System.Drawing.Point(148, 17);
             this.nextButton.Name = "nextButton";
@@ -167,37 +163,37 @@ namespace BlueOnion
             this.nextButton.TabIndex = 0;
             this.nextButton.TabStop = false;
             this.nextButton.Click += new System.EventHandler(this.NextButton_Click);
-
         }
+
         #endregion
 
         // ---------------------------------------------------------------------
         protected override void OnClick(EventArgs e)
         {
-            Point point = this.PointToClient(Control.MousePosition);
+            var point = PointToClient(MousePosition);
 
-            if (this.displayTodayRectangle.Contains(point))
+            if (displayTodayRectangle.Contains(point))
             {
-                this.GoToToday();
+                GoToToday();
                 base.OnClick(e);
                 return;
             }
 
-            foreach (RectangleF test in this.MonthNameAreas)
+            foreach (var test in MonthNameAreas)
             {
                 if (test.Contains(point))
                 {
-                    this.monthMenu.Show(this, point);
+                    monthMenu.Show(this, point);
                     base.OnClick(e);
                     return;
                 }
             }
 
-            foreach (RectangleF test in this.YearAreas)
+            foreach (var test in YearAreas)
             {
                 if (test.Contains(point))
                 {
-                    this.yearMenu.Show(this, point);
+                    yearMenu.Show(this, point);
                     base.OnClick(e);
                     return;
                 }
@@ -207,22 +203,22 @@ namespace BlueOnion
         }
 
         // ---------------------------------------------------------------------
-        protected void OnSelectMonth(Object sender, System.EventArgs e)
+        protected void OnSelectMonth(object sender, EventArgs e)
         {
-            this.firstMonth = new DateTime(
-                this.firstMonth.Year, ((MenuItem)sender).Index + 1, 1);
+            firstMonth = new DateTime(
+                firstMonth.Year, ((MenuItem) sender).Index + 1, 1);
 
-            this.DateChange();
+            DateChange();
         }
 
         // ---------------------------------------------------------------------
-        protected void OnSelectYear(Object sender, System.EventArgs e)
+        protected void OnSelectYear(object sender, EventArgs e)
         {
-            this.firstMonth = new DateTime(
-                this.firstMonth.Year + ((MenuItem)sender).Index - 5,
-                this.firstMonth.Month, this.firstMonth.Day);
+            firstMonth = new DateTime(
+                firstMonth.Year + ((MenuItem) sender).Index - 5,
+                firstMonth.Month, firstMonth.Day);
 
-            this.DateChange();
+            DateChange();
         }
 
         // ---------------------------------------------------------------------
@@ -237,10 +233,10 @@ namespace BlueOnion
         // ---------------------------------------------------------------------
         protected override void OnFontChanged(EventArgs e)
         {
-            this.MonthSize();
-            this.months = this.Months();
-            this.BuildRegions();
-            this.PositionButtons();
+            MonthSize();
+            months = Months();
+            BuildRegions();
+            PositionButtons();
             base.OnFontChanged(e);
         }
 
@@ -248,91 +244,89 @@ namespace BlueOnion
         protected override void OnMouseWheel(MouseEventArgs e)
         {
             base.OnMouseWheel(e);
-            this.firstMonth = this.firstMonth.AddMonths((e.Delta < 0) ? 1 : -1);
+            firstMonth = firstMonth.AddMonths((e.Delta < 0) ? 1 : -1);
             DateChange();
         }
 
         // ---------------------------------------------------------------------
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            if (this.displayTodayRectangle.Contains(e.X, e.Y))
+            if (displayTodayRectangle.Contains(e.X, e.Y))
             {
-                this.Cursor = Cursors.Hand;
+                Cursor = Cursors.Hand;
                 base.OnMouseMove(e);
                 return;
             }
 
-            foreach (RectangleF area in this.MonthNameAreas)
+            foreach (var area in MonthNameAreas)
             {
-                if (area.Contains(e.X, e.Y) == true)
+                if (area.Contains(e.X, e.Y))
                 {
-                    this.Cursor = Cursors.Hand;
+                    Cursor = Cursors.Hand;
                     base.OnMouseMove(e);
                     return;
                 }
             }
 
-            foreach (RectangleF area in this.YearAreas)
+            foreach (var area in YearAreas)
             {
-                if (area.Contains(e.X, e.Y) == true)
+                if (area.Contains(e.X, e.Y))
                 {
-                    this.Cursor = Cursors.Hand;
+                    Cursor = Cursors.Hand;
                     base.OnMouseMove(e);
                     return;
                 }
             }
 
-            this.Cursor = Cursors.Default;
+            Cursor = Cursors.Default;
             base.OnMouseMove(e);
         }
 
         // ---------------------------------------------------------------------
         protected override void OnPaint(PaintEventArgs pe)
         {
-            DateTime month = FirstOfMonth(this.firstMonth);
-            PointF coordinates = this.border.ToPointF();
+            var month = FirstOfMonth(firstMonth);
+            var coordinates = border.ToPointF();
 
-            Brush textBrush = new SolidBrush(this.ForeColor);
-            Brush backBrush = new SolidBrush(this.BackColor);
-            Brush titleTextBrush = new SolidBrush(this.TitleForeColor);
-            Brush titleBackBrush = new SolidBrush(this.TitleBackColor);
-            Brush weekdayTextBrush = new SolidBrush(this.WeekdayForeColor);
-            Brush weekdayBackBrush = new SolidBrush(this.WeekdayBackColor);
-            Brush trailingTextBrush = new SolidBrush(this.TrailingForeColor);
-            Brush highlightDayTextBrush = new SolidBrush(this.HighlightDayTextColor);
-            Brush weeknumberTextBrush = new SolidBrush(this.WeeknumberForeColor);
-            Brush weeknumberBackBrush = new SolidBrush(this.WeeknumberBackColor);
-            Font boldFont = new Font(this.Font, FontStyle.Bold);
-            Pen divider = new Pen(this.WeekdayBarColor);
-            string[] weekdays = AbbreviatedDayNames();
+            Brush textBrush = new SolidBrush(ForeColor);
+            Brush backBrush = new SolidBrush(BackColor);
+            Brush titleTextBrush = new SolidBrush(TitleForeColor);
+            Brush titleBackBrush = new SolidBrush(TitleBackColor);
+            Brush weekdayTextBrush = new SolidBrush(WeekdayForeColor);
+            Brush weekdayBackBrush = new SolidBrush(WeekdayBackColor);
+            Brush trailingTextBrush = new SolidBrush(TrailingForeColor);
+            Brush highlightDayTextBrush = new SolidBrush(HighlightDayTextColor);
+            Brush weeknumberTextBrush = new SolidBrush(WeeknumberForeColor);
+            Brush weeknumberBackBrush = new SolidBrush(WeeknumberBackColor);
+            var boldFont = new Font(Font, FontStyle.Bold);
+            var divider = new Pen(WeekdayBarColor);
+            var weekdays = AbbreviatedDayNames();
 
-            float cellMiddle = this.cellSize.Width * 0.5F;
-            float[] cellMiddles = new float[weekdays.Length];
+            var cellMiddle = cellSize.Width*0.5F;
+            var cellMiddles = new float[weekdays.Length];
 
-            for (int w = 0; w < weekdays.Length; ++w)
+            for (var w = 0; w < weekdays.Length; ++w)
             {
                 cellMiddles[w] = cellMiddle;
-                cellMiddle += this.cellSize.Width;
+                cellMiddle += cellSize.Width;
             }
 
-            for (int y = 0; y < months.Height; ++y)
+            for (var y = 0; y < months.Height; ++y)
             {
-                for (int x = 0; x < this.months.Width; ++x)
+                for (var x = 0; x < months.Width; ++x)
                 {
-                    Trailing drawTrailing = Trailing.None;
+                    var drawTrailing = Trailing.None;
 
-                    if (this.months.Width * this.months.Height == 1)
+                    if (months.Width*months.Height == 1)
                     {
                         drawTrailing = Trailing.Both;
                     }
-
                     else if (y == 0 && x == 0)
                     {
                         drawTrailing = Trailing.First;
                     }
-
                     else if (y == (months.Height - 1) &&
-                        x == (this.months.Width - 1))
+                        x == (months.Width - 1))
                     {
                         drawTrailing = Trailing.Last;
                     }
@@ -361,27 +355,26 @@ namespace BlueOnion
                     month = month.AddMonths(1);
                 }
 
-                coordinates.X = this.border.Width;
+                coordinates.X = border.Width;
                 coordinates.Y += SingleMonthSize.Height;
             }
 
             // Draw today string at bottom of calendar
-            if (this.ShowToday == true)
+            if (ShowToday)
             {
-                displayTodayRectangle = this.todayRectangle;
+                displayTodayRectangle = todayRectangle;
 
                 displayTodayRectangle.Offset(0,
-                    (this.months.Height - 1) * this.singleMonthSize.Height);
+                    (months.Height - 1)*SingleMonthSize.Height);
 
-                StringFormat todayFormat = new StringFormat();
+                var todayFormat = new StringFormat();
                 todayFormat.Alignment = StringAlignment.Center;
                 todayFormat.LineAlignment = StringAlignment.Center;
 
                 pe.Graphics.DrawString(
-                    "Today: " + this.TodayDate.ToShortDateString(),
+                    "Today: " + TodayDate.ToShortDateString(),
                     boldFont, textBrush, displayTodayRectangle, todayFormat);
             }
-
             else
             {
                 displayTodayRectangle = RectangleF.Empty;
@@ -410,35 +403,33 @@ namespace BlueOnion
             switch (e.KeyCode)
             {
                 case Keys.PageUp:
-                    if (e.Control == true && e.Shift == false && e.Alt == false)
+                    if (e.Control && e.Shift == false && e.Alt == false)
                     {
-                        this.firstMonth = this.firstMonth.AddYears(1);
+                        firstMonth = firstMonth.AddYears(1);
                     }
-
                     else
                     {
-                        this.firstMonth = this.firstMonth.AddMonths(1);
+                        firstMonth = firstMonth.AddMonths(1);
                     }
 
                     DateChange();
                     break;
 
                 case Keys.PageDown:
-                    if (e.Control == true && e.Shift == false && e.Alt == false)
+                    if (e.Control && e.Shift == false && e.Alt == false)
                     {
-                        this.firstMonth = this.firstMonth.AddYears(-1);
+                        firstMonth = firstMonth.AddYears(-1);
                     }
-
                     else
                     {
-                        this.firstMonth = this.firstMonth.AddMonths(-1);
+                        firstMonth = firstMonth.AddMonths(-1);
                     }
 
                     DateChange();
                     break;
 
                 case Keys.Home:
-                    this.GoToToday();
+                    GoToToday();
                     break;
 
                 default:
@@ -452,9 +443,9 @@ namespace BlueOnion
         protected override void OnSizeChanged(EventArgs e)
         {
             // Figure out if hittest regions need to be rebuilt
-            Size months = this.Months();
+            var months = Months();
 
-            if (this.months != months || this.CalendarAreas == null)
+            if (this.months != months || CalendarAreas == null)
             {
                 this.months = months;
                 PositionButtons();
@@ -465,34 +456,23 @@ namespace BlueOnion
         }
 
         // ---------------------------------------------------------------------
-        public DateTime[] BoldedDates
-        {
-            get { return this.boldedDates; }
-            set { this.boldedDates = value; }
-        }
+        public DateTime[] BoldedDates { get; set; }
 
         // ---------------------------------------------------------------------
-        public DateTime[] ColoredDates
-        {
-            get { return this.coloredDates; }
-            set { this.coloredDates = value; }
-        }
+        public DateTime[] ColoredDates { get; set; }
 
         // ---------------------------------------------------------------------
         public DayOfWeek FirstDayOfWeek
         {
-            get
-            {
-                return this.firstDayOfWeek;
-            }
+            get { return firstDayOfWeek; }
 
             set
             {
-                if (this.FirstDayOfWeek != value)
+                if (FirstDayOfWeek != value)
                 {
-                    this.firstDayOfWeek = value;
+                    firstDayOfWeek = value;
                     BuildRegions();
-                    this.Invalidate();
+                    Invalidate();
                 }
             }
         }
@@ -500,45 +480,42 @@ namespace BlueOnion
         // ---------------------------------------------------------------------
         public SelectionRange GetDisplayRange()
         {
-            DateTime start = FirstOfMonth(this.firstMonth);
-            DateTime end = start.AddMonths(this.months.Width * this.months.Height).AddDays(-1);
+            var start = FirstOfMonth(firstMonth);
+            var end = start.AddMonths(months.Width*months.Height).AddDays(-1);
             return new SelectionRange(start, end);
         }
 
         // ---------------------------------------------------------------------
         public bool Gridlines
         {
-            get
-            {
-                return this.gridlines;
-            }
+            get { return gridlines; }
 
             set
             {
-                this.gridlines = value;
-                this.Invalidate();
+                gridlines = value;
+                Invalidate();
             }
         }
 
         // ---------------------------------------------------------------------
         public HitTestInfoEx HitTest(Point point)
         {
-            int totalMonths = this.months.Width * this.months.Height;
+            var totalMonths = months.Width*months.Height;
 
-            for (int m = 0; m < totalMonths; ++m)
+            for (var m = 0; m < totalMonths; ++m)
             {
-                if (this.CalendarAreas[m].days.Contains(point) == true)
+                if (CalendarAreas[m].days.Contains(point))
                 {
-                    int x = (int)((point.X - this.CalendarAreas[m].days.Left) /
-                        this.cellSize.Width) + 1;
+                    var x = (int) ((point.X - CalendarAreas[m].days.Left)/
+                        cellSize.Width) + 1;
 
-                    int y = (int)((point.Y - this.CalendarAreas[m].days.Top) /
-                        this.cellSize.Height);
+                    var y = (int) ((point.Y - CalendarAreas[m].days.Top)/
+                        cellSize.Height);
 
-                    DateTime time = this.CalendarAreas[m].date.AddDays
-                        ((x + (y * 7)) - this.CalendarAreas[m].dayOffset - 1);
+                    var time = CalendarAreas[m].date.AddDays
+                        ((x + (y*7)) - CalendarAreas[m].dayOffset - 1);
 
-                    if (time.Month != this.CalendarAreas[m].date.Month)
+                    if (time.Month != CalendarAreas[m].date.Month)
                     {
                         time = DateTime.MinValue;
                     }
@@ -560,198 +537,174 @@ namespace BlueOnion
         // ---------------------------------------------------------------------
         public void SetDate(DateTime date)
         {
-            this.currentDate = date;
+            currentDate = date;
         }
 
         // ---------------------------------------------------------------------
         public bool ShowToday
         {
-            get
-            {
-                return this.showToday;
-            }
+            get { return showToday; }
 
             set
             {
-                this.showToday = value;
-                this.Invalidate();
+                showToday = value;
+                Invalidate();
             }
         }
 
         // ---------------------------------------------------------------------
         public bool ShowTodayCircle
         {
-            get
-            {
-                return this.showTodayCircle;
-            }
+            get { return showTodayCircle; }
 
             set
             {
-                this.showTodayCircle = value;
-                this.Invalidate();
+                showTodayCircle = value;
+                Invalidate();
             }
         }
 
         // ---------------------------------------------------------------------
         public bool ShowWeekNumbers
         {
-            get
-            {
-                return this.showWeekNumbers;
-            }
+            get { return showWeekNumbers; }
 
             set
             {
-                if (this.showWeekNumbers != value)
+                if (showWeekNumbers != value)
                 {
-                    this.showWeekNumbers = value;
+                    showWeekNumbers = value;
                     MonthSize();
                     BuildRegions();
                     PositionButtons();
-                    this.Invalidate();
+                    Invalidate();
                 }
             }
         }
 
         // ---------------------------------------------------------------------
         [Browsable(false)]
-        public Size SingleMonthSize
-        {
-            get { return this.singleMonthSize; }
-        }
+        public Size SingleMonthSize { get; private set; }
 
         // ---------------------------------------------------------------------
         public virtual Color TitleForeColor
         {
-            get { return this.titleForeColor; }
+            get { return titleForeColor; }
 
             set
             {
-                this.titleForeColor = value;
-                this.Invalidate();
+                titleForeColor = value;
+                Invalidate();
             }
         }
 
         // ---------------------------------------------------------------------
         public virtual Color TitleBackColor
         {
-            get
-            {
-                return this.titleBackColor;
-            }
+            get { return titleBackColor; }
 
             set
             {
-                this.titleBackColor = value;
-                this.previousButton.BackColor = value;
-                this.nextButton.BackColor = value;
-                this.Invalidate();
+                titleBackColor = value;
+                previousButton.BackColor = value;
+                nextButton.BackColor = value;
+                Invalidate();
             }
         }
 
         // ---------------------------------------------------------------------
         public virtual Color WeekdayForeColor
         {
-            get { return this.weekdayForeColor; }
+            get { return weekdayForeColor; }
 
             set
             {
-                this.weekdayForeColor = value;
-                this.Invalidate();
+                weekdayForeColor = value;
+                Invalidate();
             }
         }
 
         // ---------------------------------------------------------------------
         public virtual Color WeekdayBackColor
         {
-            get
-            {
-                return this.weekdayBackColor;
-            }
+            get { return weekdayBackColor; }
 
             set
             {
-                this.weekdayBackColor = value;
-                this.Invalidate();
+                weekdayBackColor = value;
+                Invalidate();
             }
         }
 
         // ---------------------------------------------------------------------
         public virtual Color WeekdayBarColor
         {
-            get
-            {
-                return this.weekdayBarColor;
-            }
+            get { return weekdayBarColor; }
 
             set
             {
-                this.weekdayBarColor = value;
-                this.Invalidate();
+                weekdayBarColor = value;
+                Invalidate();
             }
         }
 
         // ---------------------------------------------------------------------
         public virtual Color WeeknumberForeColor
         {
-            get { return this.weeknumberForeColor; }
+            get { return weeknumberForeColor; }
 
             set
             {
-                this.weeknumberForeColor = value;
-                this.Invalidate();
+                weeknumberForeColor = value;
+                Invalidate();
             }
         }
 
         // ---------------------------------------------------------------------
         public virtual Color WeeknumberBackColor
         {
-            get
-            {
-                return this.weeknumberBackColor;
-            }
+            get { return weeknumberBackColor; }
 
             set
             {
-                this.weeknumberBackColor = value;
-                this.Invalidate();
+                weeknumberBackColor = value;
+                Invalidate();
             }
         }
 
         // ---------------------------------------------------------------------
         public virtual Color TrailingForeColor
         {
-            get { return this.trailingForeColor; }
+            get { return trailingForeColor; }
 
             set
             {
-                this.trailingForeColor = value;
-                this.Invalidate();
+                trailingForeColor = value;
+                Invalidate();
             }
         }
 
         // ---------------------------------------------------------------------
         public virtual Color HighlightDayTextColor
         {
-            get { return this.highlightDayTextColor; }
+            get { return highlightDayTextColor; }
 
             set
             {
-                this.highlightDayTextColor = value;
-                this.Invalidate();
+                highlightDayTextColor = value;
+                Invalidate();
             }
         }
 
         // ---------------------------------------------------------------------
         public virtual Color GridlinesColor
         {
-            get { return this.gridlinesColor; }
+            get { return gridlinesColor; }
 
             set
             {
-                this.gridlinesColor = value;
-                this.Invalidate();
+                gridlinesColor = value;
+                Invalidate();
             }
         }
 
@@ -759,12 +712,12 @@ namespace BlueOnion
         [Browsable(false)]
         public DateTime TodayDate
         {
-            get { return this.today; }
+            get { return today; }
 
             set
             {
-                this.today = value;
-                this.Invalidate();
+                today = value;
+                Invalidate();
             }
         }
 
@@ -772,34 +725,34 @@ namespace BlueOnion
         [Browsable(false)]
         public int TodayHeight
         {
-            get { return (int)this.todayRectangle.Height; }
+            get { return (int) todayRectangle.Height; }
         }
 
         // ---------------------------------------------------------------------
         public void UpdateBoldedDates()
         {
-            this.boldedDays = new Hashtable();
+            boldedDays = new Hashtable();
 
-            if (this.boldedDates != null)
+            if (BoldedDates != null)
             {
-                foreach (DateTime date in this.boldedDates)
+                foreach (var date in BoldedDates)
                 {
-                    if (this.boldedDays.Contains(date.Date) == false)
+                    if (boldedDays.Contains(date.Date) == false)
                     {
-                        this.boldedDays.Add(date.Date, null);
+                        boldedDays.Add(date.Date, null);
                     }
                 }
             }
 
-            this.coloredDays = new Hashtable();
+            coloredDays = new Hashtable();
 
-            if (this.coloredDates != null)
+            if (ColoredDates != null)
             {
-                foreach (DateTime date in this.coloredDates)
+                foreach (var date in ColoredDates)
                 {
-                    if (this.coloredDays.Contains(date.Date) == false)
+                    if (coloredDays.Contains(date.Date) == false)
                     {
-                        this.coloredDays.Add(date.Date, null);
+                        coloredDays.Add(date.Date, null);
                     }
                 }
             }
@@ -814,56 +767,55 @@ namespace BlueOnion
         // ---------------------------------------------------------------------
         private void BuildRegions()
         {
-            int totalMonths = this.months.Width * this.months.Height;
-            this.CalendarAreas = new CalendarArea[totalMonths];
-            this.MonthNameAreas = new RectangleF[totalMonths];
-            this.YearAreas = new RectangleF[totalMonths];
-            Graphics g = this.CreateGraphics();
+            var totalMonths = months.Width*months.Height;
+            CalendarAreas = new CalendarArea[totalMonths];
+            MonthNameAreas = new RectangleF[totalMonths];
+            YearAreas = new RectangleF[totalMonths];
+            var g = CreateGraphics();
 
-            StringFormat titleFormat = new StringFormat();
+            var titleFormat = new StringFormat();
             titleFormat.Alignment = StringAlignment.Center;
             titleFormat.LineAlignment = StringAlignment.Center;
 
-            RectangleF days = this.daysRectangle;
-            int m = 0;
+            var days = daysRectangle;
+            var m = 0;
 
-            for (int y = 0; y < this.months.Height; ++y)
+            for (var y = 0; y < months.Height; ++y)
             {
-                for (int x = 0; x < this.months.Width; ++x, ++m)
+                for (var x = 0; x < months.Width; ++x, ++m)
                 {
-                    DateTime date = FirstOfMonth(this.firstMonth.AddMonths(m));
-                    this.CalendarAreas[m].date = date;
+                    var date = FirstOfMonth(firstMonth.AddMonths(m));
+                    CalendarAreas[m].date = date;
 
-                    this.CalendarAreas[m].dayOffset =
-                        ((int)this.CalendarAreas[m].date.DayOfWeek + 7 -
-                        (int)this.FirstDayOfWeek) % 7;
+                    CalendarAreas[m].dayOffset =
+                        ((int) CalendarAreas[m].date.DayOfWeek + 7 -
+                            (int) FirstDayOfWeek)%7;
 
-                    float xMonth = x * this.singleMonthSize.Width;
-                    float yMonth = y * this.SingleMonthSize.Height;
-                    this.CalendarAreas[m].days = days;
-                    this.CalendarAreas[m].days.Offset(xMonth, yMonth);
+                    float xMonth = x*SingleMonthSize.Width;
+                    float yMonth = y*SingleMonthSize.Height;
+                    CalendarAreas[m].days = days;
+                    CalendarAreas[m].days.Offset(xMonth, yMonth);
 
-
-                    SizeF titleSize = g.MeasureString(
+                    var titleSize = g.MeasureString(
                         date.ToString("MMMM, yyyy", CultureInfo.CurrentCulture),
-                        this.Font, this.titleRectangle.Size, titleFormat);
+                        Font, titleRectangle.Size, titleFormat);
 
-                    SizeF monthSize = g.MeasureString(
+                    var monthSize = g.MeasureString(
                         date.ToString("MMMM, ", CultureInfo.CurrentCulture),
-                        this.Font);
+                        Font);
 
-                    this.MonthNameAreas[m] = this.titleRectangle;
+                    MonthNameAreas[m] = titleRectangle;
 
-                    this.MonthNameAreas[m].Inflate(
-                        (titleSize.Width - this.titleRectangle.Width) / 2,
-                        (titleSize.Height - this.titleRectangle.Height) / 2);
+                    MonthNameAreas[m].Inflate(
+                        (titleSize.Width - titleRectangle.Width)/2,
+                        (titleSize.Height - titleRectangle.Height)/2);
 
-                    this.MonthNameAreas[m].Width = monthSize.Width;
-                    this.MonthNameAreas[m].Offset(xMonth, yMonth);
+                    MonthNameAreas[m].Width = monthSize.Width;
+                    MonthNameAreas[m].Offset(xMonth, yMonth);
 
-                    this.YearAreas[m] = this.MonthNameAreas[m];
-                    this.YearAreas[m].X += monthSize.Width;
-                    this.YearAreas[m].Width = titleSize.Width - monthSize.Width;
+                    YearAreas[m] = MonthNameAreas[m];
+                    YearAreas[m].X += monthSize.Width;
+                    YearAreas[m].Width = titleSize.Width - monthSize.Width;
                 }
             }
 
@@ -895,7 +847,7 @@ namespace BlueOnion
                 graphics,
                 month.ToString("MMMM, yyyy", CultureInfo.CurrentCulture),
                 start,
-                this.titleRectangle,
+                titleRectangle,
                 boldFont,
                 titleTextBrush,
                 titleBackBrush);
@@ -904,8 +856,8 @@ namespace BlueOnion
                 graphics,
                 weekdays,
                 start,
-                this.weekdaysRectangle,
-                this.Font,
+                weekdaysRectangle,
+                Font,
                 weekdayTextBrush,
                 weekdayBackBrush,
                 divider,
@@ -915,24 +867,24 @@ namespace BlueOnion
                 graphics,
                 month,
                 start,
-                this.daysRectangle,
-                this.Font,
+                daysRectangle,
+                Font,
                 boldFont,
                 textBrush,
                 trailingTextBrush,
                 highlightDayTextBrush,
                 drawTrailing,
-                this.HighlightDayTextColor,
+                HighlightDayTextColor,
                 cellMiddles);
 
-            if (this.ShowWeekNumbers == true)
+            if (ShowWeekNumbers)
             {
                 DrawWeekNumbers(
                     graphics,
                     month,
                     start,
-                    this.weekNumbersRectangle,
-                    this.Font,
+                    weekNumbersRectangle,
+                    Font,
                     weeknumberTextBrush,
                     weeknumberBackBrush,
                     divider);
@@ -946,7 +898,7 @@ namespace BlueOnion
             rectangle.Offset(start);
             graphics.FillRectangle(backBrush, rectangle);
 
-            StringFormat titleFormat = new StringFormat();
+            var titleFormat = new StringFormat();
             titleFormat.Alignment = StringAlignment.Center;
             titleFormat.LineAlignment = StringAlignment.Center;
 
@@ -968,19 +920,19 @@ namespace BlueOnion
         {
             rectangle.Offset(start);
             graphics.FillRectangle(backBrush, rectangle);
-            StringFormat weekdayFormat = new StringFormat();
+            var weekdayFormat = new StringFormat();
             weekdayFormat.Alignment = StringAlignment.Center;
 
-            for (int w = 0; w < weekdays.Length; ++w)
+            for (var w = 0; w < weekdays.Length; ++w)
             {
-                int dayOffset = (w + (int)this.FirstDayOfWeek) % 7;
+                var dayOffset = (w + (int) FirstDayOfWeek)%7;
 
                 graphics.DrawString(weekdays[dayOffset], font, textBrush,
                     rectangle.X + cellMiddles[w], rectangle.Top, weekdayFormat);
             }
 
-            float margin = this.cellSize.Width * 0.14F;
-            float verticalOffset = rectangle.Bottom - 2;
+            var margin = cellSize.Width*0.14F;
+            var verticalOffset = rectangle.Bottom - 2;
 
             graphics.DrawLine(divider, rectangle.X + margin,
                 verticalOffset, rectangle.Right - margin, verticalOffset);
@@ -1002,31 +954,31 @@ namespace BlueOnion
             float[] cellMiddles)
         {
             rectangle.Offset(start);
-            StringFormat weekdayFormat = new StringFormat();
+            var weekdayFormat = new StringFormat();
             weekdayFormat.Alignment = StringAlignment.Center;
 
-            if (this.gridlines == true)
+            if (gridlines)
             {
                 DrawGridLines(graphics, rectangle);
             }
 
-            int daysInMonth = GetDaysInMonth(month.Year, month.Month);
-            DateTime firstDayOfMonth = new DateTime(month.Year, month.Month, 1);
-            float verticalOffset = rectangle.Y;
-            int weeksDrawn = 0;
+            var daysInMonth = GetDaysInMonth(month.Year, month.Month);
+            var firstDayOfMonth = new DateTime(month.Year, month.Month, 1);
+            var verticalOffset = rectangle.Y;
+            var weeksDrawn = 0;
 
-            int dayOffset =
-                ((int)firstDayOfMonth.DayOfWeek + 7 - (int)this.FirstDayOfWeek) % 7;
+            var dayOffset =
+                ((int) firstDayOfMonth.DayOfWeek + 7 - (int) FirstDayOfWeek)%7;
 
             if (drawTrailing == Trailing.First || drawTrailing == Trailing.Both)
             {
                 // Gray days...
-                DateTime previousMonth = month.AddMonths(-1);
+                var previousMonth = month.AddMonths(-1);
 
-                int daysInPreviousMonth =
+                var daysInPreviousMonth =
                     GetDaysInMonth(previousMonth.Year, previousMonth.Month);
 
-                for (int day = daysInPreviousMonth - dayOffset + 1; day <= daysInPreviousMonth; ++day)
+                for (var day = daysInPreviousMonth - dayOffset + 1; day <= daysInPreviousMonth; ++day)
                 {
                     graphics.DrawString(day.ToString(), font, trailingTextBrush,
                         rectangle.X + cellMiddles[dayOffset - 1 - (daysInPreviousMonth - day)],
@@ -1035,38 +987,38 @@ namespace BlueOnion
             }
 
             // Regular days...
-            for (int day = 1; day <= daysInMonth; ++day)
+            for (var day = 1; day <= daysInMonth; ++day)
             {
-                DateTime date = firstDayOfMonth.AddDays(day - 1);
+                var date = firstDayOfMonth.AddDays(day - 1);
 
-                if (this.showTodayCircle && date.Date == this.TodayDate.Date)
+                if (showTodayCircle && date.Date == TodayDate.Date)
                 {
-                    float width = this.cellSize.Width;
-                    Pen todayPen = new Pen(todayColor);
+                    var width = cellSize.Width;
+                    var todayPen = new Pen(todayColor);
                     graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
                     graphics.DrawEllipse(todayPen,
-                        rectangle.X + cellMiddles[dayOffset] - (width / 2),
+                        rectangle.X + cellMiddles[dayOffset] - (width/2),
                         verticalOffset - 1,
                         width,
-                        this.cellSize.Height);
+                        cellSize.Height);
 
                     todayPen.Dispose();
                     graphics.SmoothingMode = SmoothingMode.None;
                 }
 
-                Font dayFont = font;
+                var dayFont = font;
 
-                if (this.boldedDates != null && this.boldedDates != null &&
-                    this.boldedDays.Contains(date) == true)
+                if (BoldedDates != null && BoldedDates != null &&
+                    boldedDays.Contains(date))
                 {
                     dayFont = boldFont;
                 }
 
-                Brush dayBrush = textBrush;
+                var dayBrush = textBrush;
 
-                if (this.coloredDates != null && this.coloredDays != null &&
-                    this.coloredDays.Contains(date) == true)
+                if (ColoredDates != null && coloredDays != null &&
+                    coloredDays.Contains(date))
                 {
                     dayBrush = highlightDayTextBrush;
                 }
@@ -1080,7 +1032,7 @@ namespace BlueOnion
 
                 if (dayOffset == 0)
                 {
-                    verticalOffset += this.cellSize.Height;
+                    verticalOffset += cellSize.Height;
                     weeksDrawn += 1;
                 }
             }
@@ -1089,12 +1041,12 @@ namespace BlueOnion
 
             if (drawTrailing == Trailing.Last || drawTrailing == Trailing.Both)
             {
-                DateTime nextMonth = month.AddMonths(-1);
+                var nextMonth = month.AddMonths(-1);
 
-                int daysInNextMonth =
+                var daysInNextMonth =
                     GetDaysInMonth(nextMonth.Year, nextMonth.Month);
 
-                for (int day = 1; day <= daysInNextMonth; ++day)
+                for (var day = 1; day <= daysInNextMonth; ++day)
                 {
                     graphics.DrawString(day.ToString(), font, trailingTextBrush,
                         rectangle.X + cellMiddles[dayOffset],
@@ -1105,7 +1057,7 @@ namespace BlueOnion
 
                     if (dayOffset == 0)
                     {
-                        verticalOffset += this.cellSize.Height;
+                        verticalOffset += cellSize.Height;
                         weeksDrawn += 1;
                     }
 
@@ -1120,26 +1072,26 @@ namespace BlueOnion
         // ---------------------------------------------------------------------
         private void DrawGridLines(Graphics graphics, RectangleF rectangle)
         {
-            Pen pen = new Pen(Color.Gray);
+            var pen = new Pen(Color.Gray);
 
-            float offset = rectangle.Y + this.cellSize.Height - 1;
+            var offset = rectangle.Y + cellSize.Height - 1;
 
-            for (int i = 0; i < 5; ++i)
+            for (var i = 0; i < 5; ++i)
             {
                 graphics.DrawLine(pen, rectangle.Left, offset,
                     rectangle.Right, offset);
 
-                offset += this.cellSize.Height;
+                offset += cellSize.Height;
             }
 
-            offset = rectangle.Left + this.cellSize.Width - 1;
+            offset = rectangle.Left + cellSize.Width - 1;
 
-            for (int i = 0; i < 6; ++i)
+            for (var i = 0; i < 6; ++i)
             {
                 graphics.DrawLine(pen, offset, rectangle.Top,
                     offset, rectangle.Bottom - 1);
 
-                offset += this.cellSize.Width;
+                offset += cellSize.Width;
             }
         }
 
@@ -1156,126 +1108,125 @@ namespace BlueOnion
         {
             rectangle.Offset(start);
             graphics.FillRectangle(backBrush, rectangle);
-            StringFormat weekdayFormat = new StringFormat();
+            var weekdayFormat = new StringFormat();
             weekdayFormat.Alignment = StringAlignment.Center;
 
-            float x = rectangle.X + rectangle.Width / 2;
-            float y = rectangle.Top;
+            var x = rectangle.X + rectangle.Width/2;
+            var y = rectangle.Top;
 
-            DateTime firstDayOfMonth = new DateTime(month.Year, month.Month, 1);
-            int daysInMonth = GetDaysInMonth(month.Year, month.Month);
+            var firstDayOfMonth = new DateTime(month.Year, month.Month, 1);
+            var daysInMonth = GetDaysInMonth(month.Year, month.Month);
 
-            int dayOffset = ((int)firstDayOfMonth.DayOfWeek + 7 -
-                (int)this.FirstDayOfWeek) % 7;
+            var dayOffset = ((int) firstDayOfMonth.DayOfWeek + 7 -
+                (int) FirstDayOfWeek)%7;
 
-            DateTime date = firstDayOfMonth;
-            int weeks = (daysInMonth + dayOffset + 7) / 7;
-            System.Globalization.CultureInfo ci = new CultureInfo("en-US");
+            var date = firstDayOfMonth;
+            var weeks = (daysInMonth + dayOffset + 7)/7;
+            var ci = new CultureInfo("en-US");
 
-            for (int w = 0; w < weeks; ++w)
+            for (var w = 0; w < weeks; ++w)
             {
-                int weekOfYear = ci.Calendar.GetWeekOfYear(date,
-                    System.Globalization.CalendarWeekRule.FirstFourDayWeek,
-                    this.FirstDayOfWeek);
+                var weekOfYear = ci.Calendar.GetWeekOfYear(date,
+                    CalendarWeekRule.FirstFourDayWeek,
+                    FirstDayOfWeek);
 
                 graphics.DrawString(
                     weekOfYear.ToString(CultureInfo.CurrentCulture),
                     font, textBrush, x, y, weekdayFormat);
 
                 date = date.AddDays(7);
-                y += this.cellSize.Height;
+                y += cellSize.Height;
             }
 
             graphics.DrawLine(divider,
                 rectangle.Right,
                 rectangle.Top,
                 rectangle.Right,
-                rectangle.Top + (weeks * this.cellSize.Height));
-
+                rectangle.Top + (weeks*cellSize.Height));
         }
 
         // ---------------------------------------------------------------------
         private void MonthSize()
         {
-            Graphics g = this.CreateGraphics();
-            PointF point = new PointF(0, 0);
-            StringFormat stringFormat = StringFormat.GenericTypographic;
+            var g = CreateGraphics();
+            var point = new PointF(0, 0);
+            var stringFormat = StringFormat.GenericTypographic;
             stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
             // Width determined by longest label or number
-            this.cellSize = g.MeasureString("00 ", this.Font, point,
+            cellSize = g.MeasureString("00 ", Font, point,
                 StringFormat.GenericTypographic);
 
-            foreach (string day in AbbreviatedDayNames())
+            foreach (var day in AbbreviatedDayNames())
             {
-                SizeF measured = g.MeasureString(day + " ", this.Font, point,
+                var measured = g.MeasureString(day + " ", Font, point,
                     stringFormat);
 
-                if (measured.Width > this.cellSize.Width)
+                if (measured.Width > cellSize.Width)
                 {
-                    this.cellSize = measured;
+                    cellSize = measured;
                 }
             }
 
-            this.cellSize.Height = this.Font.GetHeight(g);
-            this.cellSize.Height *= 1.2F;
+            cellSize.Height = Font.GetHeight(g);
+            cellSize.Height *= 1.2F;
             g.Dispose();
 
-            this.cellSize += this.cellPadding;
-            SizeF size = new SizeF(cellSize.Width * 7, cellSize.Height * 9.7F);
-            size += this.monthPadding;
-            size += this.monthPadding;
+            cellSize += cellPadding;
+            var size = new SizeF(cellSize.Width*7, cellSize.Height*9.7F);
+            size += monthPadding;
+            size += monthPadding;
 
             float weekNumbers = 0;
 
-            if (this.ShowWeekNumbers == true)
+            if (ShowWeekNumbers)
             {
-                weekNumbers = this.cellSize.Width;
+                weekNumbers = cellSize.Width;
                 size.Width += weekNumbers;
             }
 
             // titleRectangle
-            this.titleRectangle = new RectangleF(
-                this.monthPadding.Width,
-                this.monthPadding.Height,
-                size.Width - (this.monthPadding.Width * 2),
-                this.cellSize.Height * 1.5F);
+            titleRectangle = new RectangleF(
+                monthPadding.Width,
+                monthPadding.Height,
+                size.Width - (monthPadding.Width*2),
+                cellSize.Height*1.5F);
 
             // weekdays
-            this.weekdaysRectangle = new RectangleF(
-                weekNumbers + this.monthPadding.Width,
-                (1.6f * this.cellSize.Height) + this.monthPadding.Height,
-                this.titleRectangle.Width - weekNumbers - this.monthPadding.Width,
-                this.cellSize.Height);
+            weekdaysRectangle = new RectangleF(
+                weekNumbers + monthPadding.Width,
+                (1.6f*cellSize.Height) + monthPadding.Height,
+                titleRectangle.Width - weekNumbers - monthPadding.Width,
+                cellSize.Height);
 
             // days
-            this.daysRectangle = new RectangleF(
-                weekNumbers + this.monthPadding.Width,
-                (2.6f * this.cellSize.Height) + this.monthPadding.Height,
-                this.titleRectangle.Width, this.cellSize.Height * 6);
+            daysRectangle = new RectangleF(
+                weekNumbers + monthPadding.Width,
+                (2.6f*cellSize.Height) + monthPadding.Height,
+                titleRectangle.Width, cellSize.Height*6);
 
             // weeknumbers
-            this.weekNumbersRectangle = new RectangleF(
-                this.monthPadding.Width,
-                this.daysRectangle.Top,
-                this.cellSize.Width - 2, this.daysRectangle.Height);
+            weekNumbersRectangle = new RectangleF(
+                monthPadding.Width,
+                daysRectangle.Top,
+                cellSize.Width - 2, daysRectangle.Height);
 
             // today
-            this.todayRectangle = new RectangleF(
-                this.monthPadding.Width,
-                this.daysRectangle.Bottom,
-                this.titleRectangle.Width,
-                this.cellSize.Height);
+            todayRectangle = new RectangleF(
+                monthPadding.Width,
+                daysRectangle.Bottom,
+                titleRectangle.Width,
+                cellSize.Height);
 
             // correct for truncation
             size += new SizeF(0.5F, 0.5F);
-            this.singleMonthSize = size.ToSize();
+            SingleMonthSize = size.ToSize();
         }
 
         // ---------------------------------------------------------------------
         public static int GetDaysInMonth(int year, int month)
         {
-            System.Globalization.Calendar calendar =
+            var calendar =
                 CultureInfo.CurrentCulture.DateTimeFormat.Calendar;
 
             return calendar.GetDaysInMonth(year, month);
@@ -1288,29 +1239,29 @@ namespace BlueOnion
         }
 
         // ---------------------------------------------------------------------
-        private void PreviousButton_Click(object sender, System.EventArgs e)
+        private void PreviousButton_Click(object sender, EventArgs e)
         {
-            this.firstMonth = this.firstMonth.AddMonths(-1);
+            firstMonth = firstMonth.AddMonths(-1);
             DateChange();
-            this.Focus();
+            Focus();
         }
 
         // ---------------------------------------------------------------------
-        private void NextButton_Click(object sender, System.EventArgs e)
+        private void NextButton_Click(object sender, EventArgs e)
         {
-            this.firstMonth = this.firstMonth.AddMonths(1);
+            firstMonth = firstMonth.AddMonths(1);
             DateChange();
-            this.Focus();
+            Focus();
         }
 
         // ---------------------------------------------------------------------
         private void DateChange()
         {
             BuildRegions();
-            this.Invalidate();
+            Invalidate();
             UpdateYearMenu();
-            DateRangeEventArgs e = new DateRangeEventArgs(this.firstMonth,
-                this.firstMonth);
+            var e = new DateRangeEventArgs(firstMonth,
+                firstMonth);
 
             OnDateChanged(e);
         }
@@ -1318,89 +1269,89 @@ namespace BlueOnion
         // ---------------------------------------------------------------------
         private void UpdateYearMenu()
         {
-            this.yearMenu.MenuItems.Clear();
+            yearMenu.MenuItems.Clear();
 
-            for (int year = this.firstMonth.Year - 5;
-                 year < this.firstMonth.Year + 5;
-                 ++year)
+            for (var year = firstMonth.Year - 5;
+                year < firstMonth.Year + 5;
+                ++year)
             {
-                this.yearMenu.MenuItems.Add(
+                yearMenu.MenuItems.Add(
                     year.ToString(CultureInfo.CurrentCulture),
-                    new EventHandler(OnSelectYear));
+                    OnSelectYear);
             }
         }
 
         // ---------------------------------------------------------------------
         private Size Months()
         {
-            int border = this.border.ToSize().Width;
+            var border = this.border.ToSize().Width;
 
-            int width = Math.Max(1, (this.Width + border) /
-                this.singleMonthSize.Width);
+            var width = Math.Max(1, (Width + border)/
+                SingleMonthSize.Width);
 
             return new Size(width,
-                Math.Max(1, this.Height / this.SingleMonthSize.Height));
+                Math.Max(1, Height/SingleMonthSize.Height));
         }
 
         // ---------------------------------------------------------------------
         private void PositionButtons()
         {
-            int width = (int)this.cellSize.Width;
-            int height = (int)this.cellSize.Height;
-            this.previousButton.Size = new Size(width / 2, height);
-            this.nextButton.Size = this.previousButton.Size;
-            int margin = (int)(this.cellSize.Width * .20F);
+            var width = (int) cellSize.Width;
+            var height = (int) cellSize.Height;
+            previousButton.Size = new Size(width/2, height);
+            nextButton.Size = previousButton.Size;
+            var margin = (int) (cellSize.Width*.20F);
 
-            float titleMiddle = this.titleRectangle.Height / 2.0F;
-            int y = (int)(titleMiddle - (height * 0.5F) + 0.5F);
+            var titleMiddle = titleRectangle.Height/2.0F;
+            var y = (int) (titleMiddle - (height*0.5F) + 0.5F);
 
-            this.previousButton.Location = new Point(margin, y);
+            previousButton.Location = new Point(margin, y);
 
-            this.nextButton.Location = new Point(
-                (int)(this.SingleMonthSize.Width * this.months.Width) -
-                this.nextButton.Size.Width - margin, y);
+            nextButton.Location = new Point(
+                SingleMonthSize.Width*months.Width -
+                    nextButton.Size.Width - margin, y);
 
-            this.previousButton.Font = this.Font;
-            this.nextButton.Font = this.Font;
+            previousButton.Font = Font;
+            nextButton.Font = Font;
         }
 
         // ---------------------------------------------------------------------
         public void GoToToday()
         {
-            this.firstMonth = DateTime.Today;
+            firstMonth = DateTime.Today;
             DateChange();
         }
 
         // ---------------------------------------------------------------------
         public void GoToDate(DateTime date)
         {
-            this.firstMonth = date;
+            firstMonth = date;
             DateChange();
         }
 
         // ---------------------------------------------------------------------
-        static GraphicsPath RoundRect(float x, float y, float w, float h, float r)
+        private static GraphicsPath RoundRect(float x, float y, float w, float h, float r)
         {
-            GraphicsPath gp = new GraphicsPath();
-            float x2 = x + w;
-            float y2 = y + h;
+            var gp = new GraphicsPath();
+            var x2 = x + w;
+            var y2 = y + h;
 
-            PointF[] points = new PointF[]
-                {
-                    new PointF(x + r, y),
-                    new PointF(x2 - r, y),
-                    new PointF(x2 - r, y + r),
-                    new PointF(x2, y + r),
-                    new PointF(x2, y2 - r),
-                    new PointF(x2 - r, y2 - r),
-                    new PointF(x2 - r, y2),
-                    new PointF(x + r, y2),
-                    new PointF(x + r, y2 - r),
-                    new PointF(x, y2 - r),
-                    new PointF(x, y + r),
-                    new PointF(x + r, y + r),
-                    new PointF(x + r, y)
-                };
+            PointF[] points =
+            {
+                new PointF(x + r, y),
+                new PointF(x2 - r, y),
+                new PointF(x2 - r, y + r),
+                new PointF(x2, y + r),
+                new PointF(x2, y2 - r),
+                new PointF(x2 - r, y2 - r),
+                new PointF(x2 - r, y2),
+                new PointF(x + r, y2),
+                new PointF(x + r, y2 - r),
+                new PointF(x, y2 - r),
+                new PointF(x, y + r),
+                new PointF(x + r, y + r),
+                new PointF(x + r, y)
+            };
 
             gp.AddLines(points);
             gp.CloseFigure();
@@ -1411,27 +1362,18 @@ namespace BlueOnion
         // =====================================================================
         public class HitTestInfoEx
         {
-            private Point test;
-            private DateTime date;
-
             // -----------------------------------------------------------------
             public HitTestInfoEx(Point test, DateTime date)
             {
-                this.test = test;
-                this.date = date;
+                Point = test;
+                Time = date;
             }
 
             // -----------------------------------------------------------------
-            public DateTime Time
-            {
-                get { return date; }
-            }
+            public DateTime Time { get; }
 
             // -----------------------------------------------------------------
-            public Point Point
-            {
-                get { return test; }
-            }
+            public Point Point { get; }
         }
     }
 }

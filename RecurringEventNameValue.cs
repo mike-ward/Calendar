@@ -1,13 +1,14 @@
-// Copyright 2005 Blue Onion Software, All rights reserved
-//
-using System;
-
 namespace BlueOnion
 {
     // -------------------------------------------------------------------------
     public enum RecurringEvent
     {
-        Annually = 0, Biweekly = 1, Monthly = 2, Quarterly = 3, Semiannually = 4, None = 5
+        Annually = 0,
+        Biweekly = 1,
+        Monthly = 2,
+        Quarterly = 3,
+        Semiannually = 4,
+        None = 5
     }
 
     /// <summary>
@@ -16,27 +17,18 @@ namespace BlueOnion
     // ---------------------------------------------------------------------
     public class RecurringEventNameValue
     {
-        private string name;
-        private RecurringEvent recurringEvent;
-
-        public RecurringEventNameValue(string name,
+        private RecurringEventNameValue(string name,
             RecurringEvent recurringEvent)
         {
-            this.name = name;
-            this.recurringEvent = recurringEvent;
+            Name = name;
+            Value = recurringEvent;
         }
 
-        public string Name
-        {
-            get { return this.name; }
-        }
+        private string Name { get; }
 
-        public RecurringEvent Value
-        {
-            get { return this.recurringEvent; }
-        }
+        private RecurringEvent Value { get; }
 
-        static public string GetName(RecurringEvent recurringEvent)
+        public static string GetName(RecurringEvent recurringEvent)
         {
             string eventName;
 
@@ -74,25 +66,20 @@ namespace BlueOnion
             return eventName;
         }
 
-        static public RecurringEventNameValue[] List()
+        public static RecurringEventNameValue[] List()
         {
             RecurringEventNameValue[] list =
             {
                 new RecurringEventNameValue("Annually",
                     RecurringEvent.Annually),
-
                 new RecurringEventNameValue("Biweekly",
                     RecurringEvent.Biweekly),
-
                 new RecurringEventNameValue("Monthly",
                     RecurringEvent.Monthly),
-
                 new RecurringEventNameValue("Quarterly",
                     RecurringEvent.Quarterly),
-
                 new RecurringEventNameValue("Semi Annually",
                     RecurringEvent.Semiannually),
-
                 new RecurringEventNameValue("None",
                     RecurringEvent.None)
             };

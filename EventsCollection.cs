@@ -1,32 +1,22 @@
-// Copyright 2005 Blue Onion Software, All rights reserved
-//
 using System;
-using System.IO;
 using System.Collections;
 using System.Globalization;
+using System.IO;
 
 namespace BlueOnion
 {
-    /// <summary>
-    /// Summary description for Events.
-    /// </summary>
-    public class EventsCollection : System.Collections.IEnumerable
+    public class EventsCollection : IEnumerable
     {
-        private ArrayList eventsList = new ArrayList();
+        private readonly ArrayList eventsList = new ArrayList();
         private char[] delimiters = {',', '='};
         private readonly string version = Event.Version2;
 
         // -------------------------------------------------------------
-        public EventsCollection()
-        {
-        }
-
-        // -------------------------------------------------------------
         public void Serialize(TextWriter textWriter)
         {
-            textWriter.WriteLine(this.version);
+            textWriter.WriteLine(version);
 
-            foreach (Event ev in this.eventsList)
+            foreach (Event ev in eventsList)
             {
                 ev.Serialize(textWriter);
             }
@@ -35,12 +25,12 @@ namespace BlueOnion
         // -------------------------------------------------------------
         public void Deserialize(TextReader textReader)
         {
-            string version = textReader.ReadLine();
+            var version = textReader.ReadLine();
 
             if (version != Event.Version1 &&
-				version != Event.Version2)
+                version != Event.Version2)
             {
-                string message = String.Format(CultureInfo.CurrentCulture,
+                var message = string.Format(CultureInfo.CurrentCulture,
                     "Unrecognized event file version {0}", version);
 
                 Log.Error(message);
@@ -52,62 +42,59 @@ namespace BlueOnion
 
             while ((anEvent = Event.Deserialize(textReader, version)) != null)
             {
-                this.eventsList.Add(anEvent);
+                eventsList.Add(anEvent);
             }
         }
 
         // ---------------------------------------------------------------------
-		/// <summary>
-		/// Returns a hashtable keyed by date. Each value contains a string
-		/// containing the event description. If there are multiple events for
-		/// the given date, they are combined with newlines seperating the
-		/// multiple descriptions.
-		/// </summary>
+        /// <summary>
+        /// Returns a hashtable keyed by date. Each value contains a string
+        /// containing the event description. If there are multiple events for
+        /// the given date, they are combined with newlines seperating the
+        /// multiple descriptions.
+        /// </summary>
         public Hashtable GetDateDescriptions(DateTime start, DateTime end)
         {
-            Hashtable events = new Hashtable();
+            var events = new Hashtable();
 
-            for (int year = start.Year ; year <= end.Year ; ++year)
+            for (var year = start.Year; year <= end.Year; ++year)
             {
-                foreach (Event ev in this.eventsList)
+                foreach (Event ev in eventsList)
                 {
-                    DateTime[] dates = ev.GetAllDates(year);
+                    var dates = ev.GetAllDates(year);
 
                     if (dates == null)
                     {
                         continue;
                     }
 
-                    foreach (DateTime date in dates)
+                    foreach (var date in dates)
                     {
                         if (date >= start && date <= end)
                         {
-                            string description = ev.Description;
+                            var description = ev.Description;
 
                             try
                             {
-                                description = String.Format
+                                description = string.Format
                                     (CultureInfo.CurrentCulture, description, date);
                             }
-
-                            catch (System.FormatException e)
+                            catch (FormatException e)
                             {
                                 Log.Error(e.ToString());
                             }
-
-                            catch (System.ArgumentNullException e)
+                            catch (ArgumentNullException e)
                             {
                                 Log.Error(e.ToString());
                             }
 
                             // Strip off hours, minutes, seconds
-                            DateTime dateNormalized = date.Date;
+                            var dateNormalized = date.Date;
 
-                            if (events.Contains(dateNormalized) == true)
+                            if (events.Contains(dateNormalized))
                             {
                                 events[dateNormalized] += Environment.NewLine + description;
                             }
-
                             else
                             {
                                 events.Add(dateNormalized.Date, description);
@@ -117,61 +104,61 @@ namespace BlueOnion
                 }
             }
 
-			return events;
+            return events;
         }
 
         // ---------------------------------------------------------------------
-		public DateTime[] GetColoredDates(DateTime start, DateTime end)
-		{
-			ArrayList dateList = new ArrayList();
+        public DateTime[] GetColoredDates(DateTime start, DateTime end)
+        {
+            var dateList = new ArrayList();
 
-			for (int year = start.Year ; year <= end.Year ; ++year)
-			{
-				foreach (Event ev in this.eventsList)
-				{
-					if (ev.HighlightColor == false)
-					{
-						continue;
-					}
+            for (var year = start.Year; year <= end.Year; ++year)
+            {
+                foreach (Event ev in eventsList)
+                {
+                    if (ev.HighlightColor == false)
+                    {
+                        continue;
+                    }
 
-					DateTime[] dates = ev.GetAllDates(year);
+                    var dates = ev.GetAllDates(year);
 
-					if (dates == null)
-					{
-						continue;
-					}
+                    if (dates == null)
+                    {
+                        continue;
+                    }
 
-					foreach (DateTime date in dates)
-					{
-						if (date >= start && date <= end)
-						{
-							dateList.Add(date);				
-						}
-					}
-				}
-			}
+                    foreach (var date in dates)
+                    {
+                        if (date >= start && date <= end)
+                        {
+                            dateList.Add(date);
+                        }
+                    }
+                }
+            }
 
-			DateTime[] dateArray = new DateTime[dateList.Count];
-			dateList.CopyTo(dateArray);
-			return dateArray;
-		}
+            var dateArray = new DateTime[dateList.Count];
+            dateList.CopyTo(dateArray);
+            return dateArray;
+        }
 
         // ---------------------------------------------------------------------
-        static public int ToInt(string number)
+        public static int ToInt(string number)
         {
             if (number.Trim().Length == 0)
             {
                 return 0;
             }
 
-            return int.Parse(number, NumberStyles.Integer, 
+            return int.Parse(number, NumberStyles.Integer,
                 CultureInfo.InvariantCulture);
         }
 
         // ---------------------------------------------------------------------
-        public System.Collections.IEnumerator GetEnumerator()
+        public IEnumerator GetEnumerator()
         {
-            return this.eventsList.GetEnumerator();
+            return eventsList.GetEnumerator();
         }
 
         // ---------------------------------------------------------------------
@@ -181,13 +168,13 @@ namespace BlueOnion
             // original list items. This is intended so dialogs can manipulate
             // the event list without touching the original.
 
-            int count = this.eventsList.Count;
-            DateTime[] dates = new DateTime[count];
-            Event[] events = new Event[count];
+            var count = eventsList.Count;
+            var dates = new DateTime[count];
+            var events = new Event[count];
 
-            for (int i = 0; i < count ; ++i)
+            for (var i = 0; i < count; ++i)
             {
-                Event ev = this.eventsList[i] as Event;
+                var ev = eventsList[i] as Event;
                 dates.SetValue(ev.Date(), i);
                 events.SetValue(ev.Clone(), i);
             }
@@ -198,8 +185,8 @@ namespace BlueOnion
 
         public void SetEvents(Event[] events)
         {
-            this.eventsList.Clear();
-            this.eventsList.AddRange(events);
+            eventsList.Clear();
+            eventsList.AddRange(events);
         }
     }
 
@@ -212,14 +199,14 @@ namespace BlueOnion
             while ((line = textReader.ReadLine()) != null)
             {
                 line = line.Trim();
-        
+
                 if (line.Length == 0 || line[0] == '[')
                 {
                     continue;
                 }
 
-                // Ignore the [Fixed]/[Movable] tags in the file. Ini file API's 
-                // are not CLR compliant. It's easy to tell which format is 
+                // Ignore the [Fixed]/[Movable] tags in the file. Ini file API's
+                // are not CLR compliant. It's easy to tell which format is
                 // used. Fixed  formats are always "nnnn="
 
                 if (Char.IsNumber(line[0]) && Char.IsNumber(line[1]) &&
@@ -232,7 +219,6 @@ namespace BlueOnion
                     fixedEvent.Description = line.Substring(5);
                     this.eventsList.Add(fixedEvent);
                 }
-
                 else
                 {
                     switch (line[0])
@@ -270,7 +256,7 @@ namespace BlueOnion
 
                         case 'S':
                         case 'F':
-                        case 'W':                        
+                        case 'W':
                             Event seasonEvent = new Event();
                             string season = line.Substring(0, 2);
 
@@ -281,7 +267,7 @@ namespace BlueOnion
                                 break;
 
                             case "SU":
-                                seasonEvent.Special = SpecialEventEnum.Summer; 
+                                seasonEvent.Special = SpecialEventEnum.Summer;
                                 break;
 
                             case "FA":

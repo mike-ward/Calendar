@@ -1,56 +1,54 @@
-// Copyright 2005 Blue Onion Software, All rights reserved
-//
 using System;
-using System.IO;
 using System.Globalization;
+using System.IO;
 
 namespace BlueOnion
 {
     // -------------------------------------------------------------------------
     public enum EventType
     {
-        Recurring=0, Movable=1, Special=2
+        Recurring = 0,
+        Movable = 1,
+        Special = 2
     }
 
     // -------------------------------------------------------------------------
-    public class Event : System.ICloneable
+    public class Event : ICloneable
     {
         private EventType eventType = EventType.Recurring;
-        private int day;        // 1-31
-        private int month;      // 1-12
-        private int year;       // 4 digit
-        private int week = 1;   // 1-5
-        private int days;       // -365 to 365
+        private int day; // 1-31
+        private int month; // 1-12
+        private int year; // 4 digit
+        private int week = 1; // 1-5
+        private int days; // -365 to 365
         private DayOfWeek weekDay = DayOfWeek.Sunday;
         private SpecialEvent special = SpecialEvent.Spring;
         private RecurringEvent recurring = RecurringEvent.Annually;
-        private string description;
-		private bool highlightColor;
 
-		public static readonly string Version1 = "V1";
-		public static readonly string Version2 = "V2";
+        public static readonly string Version1 = "V1";
+        public static readonly string Version2 = "V2";
 
-        static private string[] weekNumbers = 
+        private static readonly string[] weekNumbers =
             new string[7] {"1st", "2nd", "3rd", "4th", "Last", "1st full", "Last full"};
 
         // ---------------------------------------------------------------------
         public Event()
         {
-            DateTime today = DateTime.Today;
+            var today = DateTime.Today;
 
-            this.Day = today.Day;
-            this.Month = today.Month;
-            this.Year = today.Year;
+            Day = today.Day;
+            Month = today.Month;
+            Year = today.Year;
         }
 
         // ---------------------------------------------------------------------
         public EventType EventType
         {
-            get 
-            { 
-                return (Enum.IsDefined(typeof(EventType), eventType) == true)
+            get
+            {
+                return Enum.IsDefined(typeof (EventType), eventType)
                     ? eventType
-                    : EventType.Recurring; 
+                    : EventType.Recurring;
             }
 
             set { eventType = value; }
@@ -59,22 +57,19 @@ namespace BlueOnion
         // ---------------------------------------------------------------------
         public int Month
         {
-            get 
-			{ 
-				return this.month;
-			}
+            get { return month; }
 
-            set 
-			{ 
-				if (value < 1 || value > 
-					CultureInfo.CurrentCulture.Calendar.GetMonthsInYear(this.Year))
-				{
-					throw new System.ArgumentOutOfRangeException("Month", value, 
-						"Value outside of current culture calendar range");
-				}
+            set
+            {
+                if (value < 1 || value >
+                    CultureInfo.CurrentCulture.Calendar.GetMonthsInYear(Year))
+                {
+                    throw new ArgumentOutOfRangeException("Month", value,
+                        "Value outside of current culture calendar range");
+                }
 
-				this.month = value;
-			}
+                month = value;
+            }
         }
 
         // ---------------------------------------------------------------------
@@ -94,11 +89,11 @@ namespace BlueOnion
         // ---------------------------------------------------------------------
         public int Year
         {
-            get 
-            { 
-                return (year > 0 && year < 9999) 
-                    ? year 
-                    : DateTime.Today.Year; 
+            get
+            {
+                return (year > 0 && year < 9999)
+                    ? year
+                    : DateTime.Today.Year;
             }
 
             set { year = value; }
@@ -107,9 +102,9 @@ namespace BlueOnion
         // ---------------------------------------------------------------------
         public DayOfWeek Weekday
         {
-            get 
-            { 
-                return (Enum.IsDefined(typeof(DayOfWeek), weekDay) == true)
+            get
+            {
+                return Enum.IsDefined(typeof (DayOfWeek), weekDay)
                     ? weekDay
                     : DayOfWeek.Sunday;
             }
@@ -125,21 +120,17 @@ namespace BlueOnion
         }
 
         // ---------------------------------------------------------------------
-        public string Description
-        {
-            get { return description; }
-            set { description = value; }
-        }
+        public string Description { get; set; }
 
         // ---------------------------------------------------------------------
         public SpecialEvent Special
         {
-            get 
-            { 
-                return 
-                    (Enum.IsDefined(typeof(SpecialEvent), special) == true) 
-                    ? special 
-                    : SpecialEvent.Spring;               
+            get
+            {
+                return
+                    Enum.IsDefined(typeof (SpecialEvent), special)
+                        ? special
+                        : SpecialEvent.Spring;
             }
 
             set { special = value; }
@@ -148,160 +139,154 @@ namespace BlueOnion
         // ---------------------------------------------------------------------
         public RecurringEvent Recurring
         {
-            get 
-            { 
+            get
+            {
                 return
-                    (Enum.IsDefined(typeof(RecurringEvent), recurring) == true)
-                    ? recurring
-                    : RecurringEvent.Annually;
+                    Enum.IsDefined(typeof (RecurringEvent), recurring)
+                        ? recurring
+                        : RecurringEvent.Annually;
             }
 
             set { recurring = value; }
         }
 
-		// ---------------------------------------------------------------------
-		public bool HighlightColor
-		{
-			get { return this.highlightColor; }
-			set { this.highlightColor = value; }
-		}
+        // ---------------------------------------------------------------------
+        public bool HighlightColor { get; set; }
 
-		// ---------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         public static string[] WeekNumbers()
         {
-            return Event.weekNumbers;
+            return weekNumbers;
         }
 
         // ---------------------------------------------------------------------
         public void Serialize(TextWriter textWriter)
         {
             textWriter.WriteLine("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}",
-                Enum.Format(typeof(EventType), this.EventType, "d"),
+                Enum.Format(typeof (EventType), EventType, "d"),
                 Month.ToString(CultureInfo.InvariantCulture),
                 Day.ToString(CultureInfo.InvariantCulture),
                 Year.ToString(CultureInfo.InvariantCulture),
                 Week.ToString(CultureInfo.InvariantCulture),
                 Days.ToString(CultureInfo.InvariantCulture),
-                Enum.Format(typeof(DayOfWeek), this.Weekday, "d"),
-                Enum.Format(typeof(SpecialEvent), this.Special, "d"),
-                Enum.Format(typeof(RecurringEvent), this.Recurring, "d"),
-				HighlightColor.ToString(CultureInfo.InvariantCulture),
+                Enum.Format(typeof (DayOfWeek), Weekday, "d"),
+                Enum.Format(typeof (SpecialEvent), Special, "d"),
+                Enum.Format(typeof (RecurringEvent), Recurring, "d"),
+                HighlightColor.ToString(CultureInfo.InvariantCulture),
                 Description);
         }
 
         // ---------------------------------------------------------------------
         public static Event Deserialize(TextReader textReader, string version)
         {
-			string text = textReader.ReadLine();
+            var text = textReader.ReadLine();
 
-			if (text == null)
-			{
-				return null; // end of the stream, baby...
-			}
+            if (text == null)
+            {
+                return null; // end of the stream, baby...
+            }
 
-			Event theEvent = null;
+            Event theEvent = null;
 
-			try
-			{
-				char[] delimiter = {','};
-				int length = (version == Event.Version1) ? 10 : 11;
-				string[] eventParts = text.Split(delimiter, length);
+            try
+            {
+                char[] delimiter = {','};
+                var length = (version == Version1) ? 10 : 11;
+                var eventParts = text.Split(delimiter, length);
 
-				if (eventParts.Length != length)
-				{
+                if (eventParts.Length != length)
+                {
                     Log.Error("Event.Deserialize: version and length to not match");
-					return null;
-				}
+                    return null;
+                }
 
-				theEvent = new Event();
+                theEvent = new Event();
 
-				theEvent.EventType = (EventType)
-					Enum.Parse(typeof(EventType), eventParts[0]);
+                theEvent.EventType = (EventType)
+                    Enum.Parse(typeof (EventType), eventParts[0]);
 
-				theEvent.Month = Convert.ToInt32(eventParts[1], 
-					CultureInfo.InvariantCulture);
+                theEvent.Month = Convert.ToInt32(eventParts[1],
+                    CultureInfo.InvariantCulture);
 
-				theEvent.Day = Convert.ToInt32(eventParts[2], 
-					CultureInfo.InvariantCulture);
+                theEvent.Day = Convert.ToInt32(eventParts[2],
+                    CultureInfo.InvariantCulture);
 
-				theEvent.Year = Convert.ToInt32(eventParts[3], 
-					CultureInfo.InvariantCulture);
+                theEvent.Year = Convert.ToInt32(eventParts[3],
+                    CultureInfo.InvariantCulture);
 
-				theEvent.Week = Convert.ToInt32(eventParts[4], 
-					CultureInfo.InvariantCulture);
+                theEvent.Week = Convert.ToInt32(eventParts[4],
+                    CultureInfo.InvariantCulture);
 
-				theEvent.Days = Convert.ToInt32(eventParts[5],
-					CultureInfo.InvariantCulture);
+                theEvent.Days = Convert.ToInt32(eventParts[5],
+                    CultureInfo.InvariantCulture);
 
-				theEvent.Weekday = (DayOfWeek)
-					Enum.Parse(typeof(DayOfWeek), eventParts[6]);
+                theEvent.Weekday = (DayOfWeek)
+                    Enum.Parse(typeof (DayOfWeek), eventParts[6]);
 
-				theEvent.Special = (SpecialEvent)
-					Enum.Parse(typeof(SpecialEvent), eventParts[7]);
+                theEvent.Special = (SpecialEvent)
+                    Enum.Parse(typeof (SpecialEvent), eventParts[7]);
 
-				theEvent.Recurring = (RecurringEvent)
-					Enum.Parse(typeof(RecurringEvent), eventParts[8]);
+                theEvent.Recurring = (RecurringEvent)
+                    Enum.Parse(typeof (RecurringEvent), eventParts[8]);
 
-				if (version == Event.Version1)
-				{
-					theEvent.Description = eventParts[9];
-				}
+                if (version == Version1)
+                {
+                    theEvent.Description = eventParts[9];
+                }
+                else if (version == Version2)
+                {
+                    theEvent.HighlightColor = Convert.ToBoolean(eventParts[9],
+                        CultureInfo.InvariantCulture);
 
-				else if (version == Event.Version2)
-				{
-					theEvent.HighlightColor = Convert.ToBoolean(eventParts[9], 
-						CultureInfo.InvariantCulture);
+                    theEvent.Description = eventParts[10];
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error("Event.Deserialize exception caught" + Environment.NewLine + e);
+            }
 
-					theEvent.Description = eventParts[10];
-				}
-			}
-
-			catch (System.Exception e)
-			{
-				Log.Error("Event.Deserialize exception caught" + Environment.NewLine + e.ToString());
-			}
-
-			return theEvent;
+            return theEvent;
         }
 
         // ---------------------------------------------------------------------
         public override string ToString()
         {
-            string date = string.Empty;
-            string recurring = string.Empty;
+            var date = string.Empty;
+            var recurring = string.Empty;
 
-            switch (this.EventType)
+            switch (EventType)
             {
                 case EventType.Recurring:
-                    int year = (this.Year == 0) ? DateTime.Today.Year : this.Year;
-                    DateTime d = new DateTime(year, this.Month, this.Day);
+                    var year = (Year == 0) ? DateTime.Today.Year : Year;
+                    var d = new DateTime(year, Month, Day);
                     date = d.ToShortDateString();
 
-                    if (this.Recurring != RecurringEvent.Annually)
+                    if (Recurring != RecurringEvent.Annually)
                     {
-                        recurring = "(" + RecurringEventNameValue.GetName(this.Recurring) + ")";
+                        recurring = "(" + RecurringEventNameValue.GetName(Recurring) + ")";
                     }
 
                     break;
 
                 case EventType.Movable:
-                    string week = 
-                        (this.Week > 0 && this.Week <= Event.WeekNumbers().Length)
-                        ? Event.WeekNumbers()[this.Week - 1]
-                        : "Out of range";
+                    var week =
+                        (Week > 0 && Week <= WeekNumbers().Length)
+                            ? WeekNumbers()[Week - 1]
+                            : "Out of range";
 
-                    date =  String.Format(CultureInfo.CurrentCulture, 
-                        "{0} {1} {2}", 
+                    date = string.Format(CultureInfo.CurrentCulture,
+                        "{0} {1} {2}",
                         week,
-                        DateTimeFormatInfo.CurrentInfo.GetAbbreviatedDayName(this.Weekday),
-                        Event.GetAbbreviatedMonthName(this.Month));
+                        DateTimeFormatInfo.CurrentInfo.GetAbbreviatedDayName(Weekday),
+                        GetAbbreviatedMonthName(Month));
 
                     break;
 
                 case EventType.Special:
-                    date = SpecialEventNameValue.GetName(this.Special) + 
-                        ((this.Days < 0) ? " - " : " + ") +
-                        Math.Abs(this.Days).ToString(CultureInfo.CurrentCulture);
+                    date = SpecialEventNameValue.GetName(Special) +
+                        ((Days < 0) ? " - " : " + ") +
+                        Math.Abs(Days).ToString(CultureInfo.CurrentCulture);
 
                     break;
 
@@ -309,14 +294,14 @@ namespace BlueOnion
                     break;
             }
 
-            return String.Format(CultureInfo.CurrentCulture,
-                "{0,-15}\t {1} {2}", date, this.Description, recurring);
+            return string.Format(CultureInfo.CurrentCulture,
+                "{0,-15}\t {1} {2}", date, Description, recurring);
         }
 
         // ---------------------------------------------------------------------
         public DateTime Date()
         {
-            return this.Date(this.Year);
+            return Date(Year);
         }
 
         // ---------------------------------------------------------------------
@@ -327,53 +312,53 @@ namespace BlueOnion
                 year = DateTime.Today.Year;
             }
 
-            DateTime date = DateTime.MinValue;
+            var date = DateTime.MinValue;
 
-            switch (this.EventType)
+            switch (EventType)
             {
                 case EventType.Recurring:
-                    date = new DateTime(year, this.Month, this.Day);
+                    date = new DateTime(year, Month, Day);
                     break;
 
                 case EventType.Movable:
-                    int day = DateComputations.NthWeekday(this.Week, 
-                        Convert.ToInt32(this.Weekday, CultureInfo.InvariantCulture), 
-                        this.Month, year);
+                    var day = DateComputations.NthWeekday(Week,
+                        Convert.ToInt32(Weekday, CultureInfo.InvariantCulture),
+                        Month, year);
 
-                    date = new DateTime(year, this.Month, day);
+                    date = new DateTime(year, Month, day);
                     break;
 
                 case EventType.Special:
-                    switch (this.Special)
+                    switch (Special)
                     {
                         case SpecialEvent.Easter:
-                            DateTime easter = DateComputations.Easter(year);
-                            date = easter.AddDays(this.Days);
+                            var easter = DateComputations.Easter(year);
+                            date = easter.AddDays(Days);
                             break;
 
                         case SpecialEvent.Advent:
-                            DateTime advent = DateComputations.Advent(year);
-                            date = advent.AddDays(this.Days);
+                            var advent = DateComputations.Advent(year);
+                            date = advent.AddDays(Days);
                             break;
 
                         case SpecialEvent.Spring:
-                            DateTime spring = DateComputations.EquinoxSolstice(year, Season.Spring);
-                            date = spring.AddDays(this.Days);
+                            var spring = DateComputations.EquinoxSolstice(year, Season.Spring);
+                            date = spring.AddDays(Days);
                             break;
 
                         case SpecialEvent.Summer:
-                            DateTime summer = DateComputations.EquinoxSolstice(year, Season.Summer);
-                            date = summer.AddDays(this.Days);
+                            var summer = DateComputations.EquinoxSolstice(year, Season.Summer);
+                            date = summer.AddDays(Days);
                             break;
 
                         case SpecialEvent.Autumn:
-                            DateTime autumn = DateComputations.EquinoxSolstice(year, Season.Autumn);
-                            date = autumn.AddDays(this.Days);
+                            var autumn = DateComputations.EquinoxSolstice(year, Season.Autumn);
+                            date = autumn.AddDays(Days);
                             break;
 
                         case SpecialEvent.Winter:
-                            DateTime winter = DateComputations.EquinoxSolstice(year, Season.Winter);
-                            date = winter.AddDays(this.Days);
+                            var winter = DateComputations.EquinoxSolstice(year, Season.Winter);
+                            date = winter.AddDays(Days);
                             break;
 
                         default:
@@ -393,37 +378,37 @@ namespace BlueOnion
                 year = DateTime.Today.Year;
             }
 
-            System.Collections.ArrayList dateList = 
+            var dateList =
                 new System.Collections.ArrayList();
 
-            if (this.EventType == EventType.Recurring)
+            if (EventType == EventType.Recurring)
             {
-                switch (this.Recurring)
+                switch (Recurring)
                 {
                     case RecurringEvent.None:
                         if (year == this.year)
                         {
-                            dateList.Add(new DateTime(year, this.Month, this.Day));
+                            dateList.Add(new DateTime(year, Month, Day));
                         }
                         break;
 
                     case RecurringEvent.Annually:
-                        dateList.Add(new DateTime(year, this.Month, this.Day));
+                        dateList.Add(new DateTime(year, Month, Day));
                         break;
 
                     case RecurringEvent.Biweekly:
-                        DateTime date = new DateTime(year, 1, 1);
+                        var date = new DateTime(year, 1, 1);
 
-                        if (date < this.Date())
+                        if (date < Date())
                         {
-                            date = this.Date();
+                            date = Date();
                         }
 
-                        TimeSpan timeSpan = this.Date() - date;
-                        int offset = (timeSpan.Days % 14);
+                        var timeSpan = Date() - date;
+                        var offset = (timeSpan.Days%14);
 
-                        for (date = date.AddDays(offset) ; 
-                            date.Year == year ;
+                        for (date = date.AddDays(offset);
+                            date.Year == year;
                             date = date.AddDays(14))
                         {
                             dateList.Add(date);
@@ -445,45 +430,43 @@ namespace BlueOnion
                 }
             }
 
-			// A zero month indicates that the movable event repeats for all
-			// months
+            // A zero month indicates that the movable event repeats for all
+            // months
+            else if (EventType == EventType.Movable &&
+                Recurring == RecurringEvent.Monthly)
+            {
+                // Clone a copy so we don't mess up the original event.
+                var ev = (Event) Clone();
+                var date = Date(year);
 
-			else if (this.EventType == EventType.Movable && 
-				this.Recurring == RecurringEvent.Monthly)
-			{
-				// Clone a copy so we don't mess up the original event.
-				Event ev = (Event)this.Clone();
-				DateTime date = this.Date(year);
+                if (date < ev.Date())
+                {
+                    date = ev.Date();
+                }
 
-				if (date < ev.Date())
-				{
-					date = ev.Date();
-				}
+                ev.Month = date.Month;
 
-				ev.Month = date.Month;
+                var maxMonths =
+                    CultureInfo.CurrentCulture.Calendar.GetMonthsInYear(year);
 
-				int maxMonths = 
-					CultureInfo.CurrentCulture.Calendar.GetMonthsInYear(year);
+                for (;;)
+                {
+                    dateList.Add(ev.Date());
 
-				for (;;)
-				{
-					dateList.Add(ev.Date());
+                    if ((ev.Month + 1) > maxMonths)
+                    {
+                        break;
+                    }
 
-					if ((ev.Month + 1) > maxMonths)
-					{
-						break;
-					}
+                    ev.Month += 1;
+                }
+            }
+            else
+            {
+                dateList.Add(Date(year));
+            }
 
-					ev.Month += 1;
-				}
-			}
-
-			else
-			{
-				dateList.Add(this.Date(year));
-			}
-
-            DateTime[] dates = new DateTime[dateList.Count];
+            var dates = new DateTime[dateList.Count];
             dateList.CopyTo(dates);
             return dates;
         }
@@ -491,14 +474,14 @@ namespace BlueOnion
         // ---------------------------------------------------------------------
         private System.Collections.ArrayList Monthly(int months, int year)
         {
-            System.Collections.ArrayList dateList = 
+            var dateList =
                 new System.Collections.ArrayList();
 
-            DateTime date = this.Date(year);
+            var date = Date(year);
 
-            if (date < this.Date())
+            if (date < Date())
             {
-                date = this.Date();
+                date = Date();
             }
 
             while (date.Year == year)
@@ -510,31 +493,31 @@ namespace BlueOnion
             return dateList;
         }
 
-		// ---------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         public object Clone()
         {
             // A shallow copy works here
-            return this.MemberwiseClone();
+            return MemberwiseClone();
         }
 
-		// ---------------------------------------------------------------------
-		public static string[] AbbreviatedMonthNames
-		{
-			get
-			{
-				string[] monthNames = DateTimeFormatInfo.CurrentInfo.MonthNames;
-				string[] names = new string[monthNames.Length + 1];
-				names[0] = "Monthly";
-				monthNames.CopyTo(names, 1);
-				return names;
-			}
-		}
+        // ---------------------------------------------------------------------
+        public static string[] AbbreviatedMonthNames
+        {
+            get
+            {
+                var monthNames = DateTimeFormatInfo.CurrentInfo.MonthNames;
+                var names = new string[monthNames.Length + 1];
+                names[0] = "Monthly";
+                monthNames.CopyTo(names, 1);
+                return names;
+            }
+        }
 
-		private static string GetAbbreviatedMonthName(int month)
-		{
-			return (month == 0)
-				? "Monthly"
-				: DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(month);
-		}
-	}
+        private static string GetAbbreviatedMonthName(int month)
+        {
+            return (month == 0)
+                ? "Monthly"
+                : DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(month);
+        }
+    }
 }

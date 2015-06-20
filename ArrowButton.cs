@@ -1,89 +1,88 @@
-// Copyright 2005 Blue Onion Software, All rights reserved
-//
 using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Data;
 using System.Windows.Forms;
 
 namespace BlueOnion
 {
-	public class ArrowButton : System.Windows.Forms.Button
-	{
+    public class ArrowButton : Button
+    {
         private Point[] arrow;
-        private ArrowButtonDirection direction = ArrowButtonDirection.Left;
-		private System.ComponentModel.Container components = null;
+        private Container components;
 
-        public enum ArrowButtonDirection { Up = 0, Down, Left, Right };
+        public enum ArrowButtonDirection
+        {
+            Up = 0,
+            Down,
+            Left,
+            Right
+        };
 
         // ---------------------------------------------------------------------
-		public ArrowButton()
-		{
-			InitializeComponent();
-		}
+        public ArrowButton()
+        {
+            InitializeComponent();
+        }
 
         // ---------------------------------------------------------------------
-        protected override void Dispose( bool disposing )
-		{
-			if (disposing)
-			{
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
                 if (components != null)
                 {
                     components.Dispose();
                 }
-			}
+            }
 
-			base.Dispose(disposing);
-		}
+            base.Dispose(disposing);
+        }
 
-		#region Component Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-			components = new System.ComponentModel.Container();
-		}
-		#endregion
+        #region Component Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            components = new System.ComponentModel.Container();
+        }
+
+        #endregion
 
         // ---------------------------------------------------------------------
-        public ArrowButtonDirection Direction
-        {
-            get { return this.direction; }
-            set { this.direction = value; }
-        }
+        public ArrowButtonDirection Direction { get; set; } = ArrowButtonDirection.Left;
 
         // ---------------------------------------------------------------------
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            Color color = (this.ForeColor == Color.White) 
+            var color = (ForeColor == Color.White)
                 ? Color.BlanchedAlmond
-                : ControlPaint.Light(this.ForeColor);
+                : ControlPaint.Light(ForeColor);
 
-            Graphics g = this.CreateGraphics();
-            this.DrawArrow(color, g);
+            var g = CreateGraphics();
+            DrawArrow(color, g);
             g.Dispose();
         }
 
         // ---------------------------------------------------------------------
         protected override void OnPaint(PaintEventArgs pe)
-		{
-            DrawArrow(this.ForeColor, pe.Graphics);
-		}
+        {
+            DrawArrow(ForeColor, pe.Graphics);
+        }
 
         // ---------------------------------------------------------------------
         protected override void OnSizeChanged(EventArgs e)
         {
-            int width = this.Width;
-            int height = this.Height;
+            var width = Width;
+            var height = Height;
 
-            switch (this.direction)
+            switch (Direction)
             {
                 case ArrowButtonDirection.Left:
-                    this.arrow = new Point[]
+                    arrow = new[]
                     {
                         new Point(0, height/2),
                         new Point(width, 0),
@@ -93,7 +92,7 @@ namespace BlueOnion
                     break;
 
                 case ArrowButtonDirection.Right:
-                    this.arrow = new Point[]
+                    arrow = new[]
                     {
                         new Point(width, height/2),
                         new Point(0, 0),
@@ -103,7 +102,7 @@ namespace BlueOnion
                     break;
 
                 case ArrowButtonDirection.Up:
-                    this.arrow = new Point[]
+                    arrow = new[]
                     {
                         new Point(width/2, 0),
                         new Point(0, height),
@@ -113,7 +112,7 @@ namespace BlueOnion
                     break;
 
                 case ArrowButtonDirection.Down:
-                    this.arrow = new Point[]
+                    arrow = new[]
                     {
                         new Point(width/2, height),
                         new Point(0, 0),
@@ -125,36 +124,37 @@ namespace BlueOnion
                 default:
                     throw new InvalidEnumArgumentException
                         ("Invalid ArrowButtonDirection");
-            };
+            }
+            ;
 
-            GraphicsPath graphics  = new GraphicsPath();
+            var graphics = new GraphicsPath();
             graphics.AddLines(arrow);
 
-            Region old = this.Region;
-            this.Region = new Region(graphics);
-            
+            var old = Region;
+            Region = new Region(graphics);
+
             if (old != null)
             {
                 old.Dispose();
             }
 
-            base.OnSizeChanged (e);
+            base.OnSizeChanged(e);
         }
 
         // ---------------------------------------------------------------------
         private void DrawArrow(Color color, Graphics graphics)
         {
             Brush b = new SolidBrush(color);
-            graphics.FillRegion(b, this.Region);
+            graphics.FillRegion(b, Region);
             b.Dispose();
 
-            int width = this.Width;
-            int height = this.Height;
+            var width = Width;
+            var height = Height;
 
-            Pen p = new Pen(this.BackColor);
+            var p = new Pen(BackColor);
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            graphics.DrawLines(p, this.arrow);
+            graphics.DrawLines(p, arrow);
             p.Dispose();
         }
-	}
+    }
 }
