@@ -43,13 +43,21 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeBuildCommandLine>build.cmd</NMakeBuildCommandLine>
-    <NMakeOutput>Installer.exe</NMakeOutput>
+    <NMakeOutput>$(ProjectDir)out\Installer.exe</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <OutDir>$(ProjectDir)\out</OutDir>
+    <NMakeReBuildCommandLine>build.cmd</NMakeReBuildCommandLine>
+    <IntDir>$(ProjectDir)\out</IntDir>
+    <NMakeCleanCommandLine>build.cmd</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeBuildCommandLine>build.cmd</NMakeBuildCommandLine>
-    <NMakeOutput>Installer.exe</NMakeOutput>
+    <NMakeOutput>$(ProjectDir)out\Installer.exe</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <OutDir>$(ProjectDir)\out</OutDir>
+    <NMakeReBuildCommandLine>build.cmd</NMakeReBuildCommandLine>
+    <IntDir>$(ProjectDir)\out</IntDir>
+    <NMakeCleanCommandLine>build.cmd</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
