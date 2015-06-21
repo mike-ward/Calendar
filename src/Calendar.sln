@@ -7,6 +7,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendar", "Calendar\Calendar.csproj", "{D9346C8E-BE9C-4816-A2DB-21E965C18214}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Installer", "Installer\Installer.vcxproj", "{052D55B2-1D1D-488F-9882-F950E7784DAD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D9346C8E-BE9C-4816-A2DB-21E965C18214} = {D9346C8E-BE9C-4816-A2DB-21E965C18214}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

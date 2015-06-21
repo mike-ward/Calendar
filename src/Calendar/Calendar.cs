@@ -7,6 +7,8 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
+// ReSharper disable InconsistentNaming
+
 namespace BlueOnion
 {
     internal class Calendar : Form
@@ -18,13 +20,13 @@ namespace BlueOnion
 
         private static readonly string ApplicationDataPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Blue Onion Software\\Calendar");
+            "Calendar");
 
         private static readonly string ConfigFileName = "Calendar.config";
         private static readonly string EventsFileName = "Calendar.events";
 
-        public static readonly string WebSite = "http://blueonionsoftware.com";
-        public static readonly string EmailAddress = "mailto:support@blueonionsoftware.com";
+        public static readonly string WebSite = "http://mike-ward.net";
+        public static readonly string EmailAddress = "mailto:mike@mike-ward.net";
 
         private SelectionRange lastRange = new SelectionRange();
 
