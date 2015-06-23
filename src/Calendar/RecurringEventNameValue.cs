@@ -24,9 +24,9 @@ namespace BlueOnion
             Value = recurringEvent;
         }
 
-        private string Name { get; }
+        public string Name { get; set; }
 
-        private RecurringEvent Value { get; }
+        public RecurringEvent Value { get; set; }
 
         public static string GetName(RecurringEvent recurringEvent)
         {

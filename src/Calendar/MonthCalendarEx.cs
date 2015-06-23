@@ -1370,10 +1370,10 @@ namespace BlueOnion
             }
 
             // -----------------------------------------------------------------
-            public DateTime Time { get; }
+            public DateTime Time { get; set;  }
 
             // -----------------------------------------------------------------
-            public Point Point { get; }
+            public Point Point { get; set;  }
         }
     }
 }

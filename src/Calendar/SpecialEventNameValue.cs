@@ -21,9 +21,9 @@ namespace BlueOnion
             Value = specialEvent;
         }
 
-        public string Name { get; }
+        public string Name { get; set; }
 
-        public SpecialEvent Value { get; }
+        public SpecialEvent Value { get; set; }
 
         public static string GetName(SpecialEvent specialEvent)
         {

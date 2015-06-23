@@ -10,6 +10,6 @@ namespace BlueOnion
             ProductId = productId;
         }
 
-        public string ProductId { get; }
+        public string ProductId { get; set; }
     }
 }
