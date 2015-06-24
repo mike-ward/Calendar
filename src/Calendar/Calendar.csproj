@@ -181,6 +181,9 @@
     <Content Include="App.ico" />
     <Content Include="Tray.ico" />
     <None Include="app.config" />
+    <None Include="Calendar.mht">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

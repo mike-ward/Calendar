@@ -4,7 +4,7 @@
   <Product Id="*"
            Name="Calendar"
            Language="1033"
-           Version="2.2.3"
+           Version="2.2.4"
            Manufacturer="Mike Ward"
            UpgradeCode="{B21956FF-7B04-4FA2-BB5B-C9524EAAD656}">
 
@@ -51,6 +51,9 @@
             <Component Id="Calendar.exe.config" Guid="{E0433E30-E063-49CC-A089-5F9ED0711F35}">
               <File Id="Calendar.exe.config" KeyPath="yes" Source="$(var.SourceFiles)\Calendar.exe.config" />
             </Component>
+            <Component Id="Calendar.mht" Guid="{E3CCC040-6261-436E-AD83-8319589CFF7A}">
+              <File Id="Calendar.mht" KeyPath="yes" Source="$(var.SourceFiles)\Calendar.mht" />
+            </Component>
           </Directory>
         </Directory>
       </Directory>
@@ -74,6 +77,7 @@
       <ComponentRef Id="ApplicationShortcutDesktop" />
       <ComponentRef Id="Calendar.exe" />
       <ComponentRef Id="Calendar.exe.config" />
+      <ComponentRef Id="Calendar.mht" />
     </ComponentGroup>
   </Product>
 </Wix>
